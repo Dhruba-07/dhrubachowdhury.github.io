@@ -379,7 +379,7 @@ function sendMessage() {
   appendMsg(msg, 'user');
   chatHistory.push({ role: 'user', content: msg });
   var typing = appendTyping();
-  fetch('/.netlify/functions/chat', {
+  fetch('https://dhruba-chat.dhrubax101.workers.dev', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages: chatHistory, system: CONTEXT })
