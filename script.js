@@ -8,210 +8,222 @@ function getCtx() {
   return audioCtx;
 }
 
-// BOOT SEQUENCE - cinematic sci-fi startup
+// ── TICK FACTORY ── creates a single modern tick sound with variety
+function playTick(style) {
+  var ctx = getCtx();
+  if (!ctx) return;
+  style = style || 'default';
+
+  if (style === 'soft') {
+    // Soft muted tick - nav hover
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    var filter = ctx.createBiquadFilter();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.04);
+    filter.type = 'highpass';
+    filter.frequency.value = 800;
+    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+    osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.06);
+
+  } else if (style === 'click') {
+    // Sharp digital click - card hover
+    var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.03), ctx.sampleRate);
+    var data = buf.getChannelData(0);
+    for (var i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 4) * 0.3;
+    }
+    var src = ctx.createBufferSource();
+    var filter = ctx.createBiquadFilter();
+    var gain = ctx.createGain();
+    filter.type = 'bandpass';
+    filter.frequency.value = 3000;
+    filter.Q.value = 1;
+    gain.gain.value = 0.6;
+    src.buffer = buf;
+    src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    src.start(ctx.currentTime);
+
+  } else if (style === 'open') {
+    // THE ONE - chatbot open sound (2 beat modern tick)
+    var times = [0, 0.12];
+    var freqs = [1200, 1600];
+    for (var i = 0; i < 2; i++) {
+      (function(freq, t) {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        var filter = ctx.createBiquadFilter();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + t);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.85, ctx.currentTime + t + 0.08);
+        filter.type = 'bandpass';
+        filter.frequency.value = freq;
+        filter.Q.value = 3;
+        gain.gain.setValueAtTime(0, ctx.currentTime + t);
+        gain.gain.linearRampToValueAtTime(0.09, ctx.currentTime + t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.1);
+        osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + t);
+        osc.stop(ctx.currentTime + t + 0.12);
+      })(freqs[i], times[i]);
+    }
+
+  } else if (style === 'section') {
+    // Section change - single crisp tick with short tail
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    var filter = ctx.createBiquadFilter();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(2200, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.06);
+    filter.type = 'bandpass';
+    filter.frequency.value = 1800;
+    filter.Q.value = 4;
+    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.09);
+
+  } else if (style === 'form') {
+    // Form sent - 3 ascending ticks
+    var ftimes = [0, 0.1, 0.2];
+    var ffreqs = [1000, 1400, 1800];
+    for (var i = 0; i < 3; i++) {
+      (function(freq, t) {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        var filter = ctx.createBiquadFilter();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + t);
+        filter.type = 'bandpass';
+        filter.frequency.value = freq;
+        filter.Q.value = 5;
+        gain.gain.setValueAtTime(0, ctx.currentTime + t);
+        gain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.1);
+        osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + t);
+        osc.stop(ctx.currentTime + t + 0.12);
+      })(ffreqs[i], ftimes[i]);
+    }
+
+  } else {
+    // default - subtle tap
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1000, ctx.currentTime);
+    gain.gain.setValueAtTime(0.03, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.05);
+  }
+}
+
+// ── BOOT SEQUENCE - "Welcome to another world" ──
 function playBoot() {
   var ctx = getCtx();
   if (!ctx) return;
 
-  // Layer 1: deep rumble fade in
-  var buf = ctx.createBuffer(1, ctx.sampleRate * 1.5, ctx.sampleRate);
+  // Layer 1: Deep space rumble
+  var buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
   var data = buf.getChannelData(0);
   for (var i = 0; i < data.length; i++) {
-    data[i] = (Math.random() * 2 - 1) * Math.pow(i / data.length, 2) * 0.15;
+    data[i] = (Math.random() * 2 - 1) * Math.pow(i / data.length, 1.5) * (1 - i / data.length) * 0.2;
   }
   var rumble = ctx.createBufferSource();
   var rumbleFilter = ctx.createBiquadFilter();
   var rumbleGain = ctx.createGain();
   rumbleFilter.type = 'lowpass';
-  rumbleFilter.frequency.setValueAtTime(80, ctx.currentTime);
-  rumbleFilter.frequency.linearRampToValueAtTime(200, ctx.currentTime + 1.5);
+  rumbleFilter.frequency.setValueAtTime(60, ctx.currentTime);
+  rumbleFilter.frequency.linearRampToValueAtTime(180, ctx.currentTime + 2);
   rumbleGain.gain.setValueAtTime(0, ctx.currentTime);
-  rumbleGain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.3);
-  rumbleGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.4);
+  rumbleGain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.4);
+  rumbleGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.8);
   rumble.buffer = buf;
   rumble.connect(rumbleFilter);
   rumbleFilter.connect(rumbleGain);
   rumbleGain.connect(ctx.destination);
   rumble.start(ctx.currentTime);
 
-  // Layer 2: frequency sweep (power-on rise)
-  var sweep = ctx.createOscillator();
-  var sweepGain = ctx.createGain();
-  var sweepFilter = ctx.createBiquadFilter();
-  sweep.type = 'sawtooth';
-  sweep.frequency.setValueAtTime(40, ctx.currentTime + 0.1);
-  sweep.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 1.2);
-  sweepFilter.type = 'bandpass';
-  sweepFilter.frequency.setValueAtTime(200, ctx.currentTime);
-  sweepFilter.frequency.linearRampToValueAtTime(1000, ctx.currentTime + 1.2);
-  sweepFilter.Q.value = 3;
-  sweepGain.gain.setValueAtTime(0, ctx.currentTime + 0.1);
-  sweepGain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.3);
-  sweepGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.3);
-  sweep.connect(sweepFilter);
-  sweepFilter.connect(sweepGain);
-  sweepGain.connect(ctx.destination);
-  sweep.start(ctx.currentTime + 0.1);
-  sweep.stop(ctx.currentTime + 1.3);
+  // Layer 2: Portal opening - rising sine wave
+  var portal = ctx.createOscillator();
+  var portalGain = ctx.createGain();
+  var portalFilter = ctx.createBiquadFilter();
+  portal.type = 'sine';
+  portal.frequency.setValueAtTime(55, ctx.currentTime + 0.2);
+  portal.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 1.4);
+  portalFilter.type = 'lowpass';
+  portalFilter.frequency.setValueAtTime(300, ctx.currentTime + 0.2);
+  portalFilter.frequency.linearRampToValueAtTime(2000, ctx.currentTime + 1.4);
+  portalGain.gain.setValueAtTime(0, ctx.currentTime + 0.2);
+  portalGain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 0.5);
+  portalGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+  portal.connect(portalFilter); portalFilter.connect(portalGain); portalGain.connect(ctx.destination);
+  portal.start(ctx.currentTime + 0.2); portal.stop(ctx.currentTime + 1.5);
 
-  // Layer 3: digital stutter ticks (system loading)
-  var tickTimes = [0.4, 0.55, 0.65, 0.73, 0.79, 0.84, 0.88, 0.91, 0.94];
-  for (var t = 0; t < tickTimes.length; t++) {
-    (function(time) {
-      var tick = ctx.createOscillator();
-      var tickGain = ctx.createGain();
-      tick.type = 'square';
-      tick.frequency.value = 1200 + Math.random() * 400;
-      tickGain.gain.setValueAtTime(0.05, ctx.currentTime + time);
-      tickGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + time + 0.04);
-      tick.connect(tickGain);
-      tickGain.connect(ctx.destination);
-      tick.start(ctx.currentTime + time);
-      tick.stop(ctx.currentTime + time + 0.05);
-    })(tickTimes[t]);
-  }
-
-  // Layer 4: final confirmation PING
-  var ping = ctx.createOscillator();
-  var pingGain = ctx.createGain();
-  var pingFilter = ctx.createBiquadFilter();
-  ping.type = 'sine';
-  ping.frequency.setValueAtTime(1800, ctx.currentTime + 1.1);
-  ping.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 1.15);
-  pingFilter.type = 'highpass';
-  pingFilter.frequency.value = 1000;
-  pingGain.gain.setValueAtTime(0, ctx.currentTime + 1.1);
-  pingGain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 1.15);
-  pingGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0);
-  ping.connect(pingFilter);
-  pingFilter.connect(pingGain);
-  pingGain.connect(ctx.destination);
-  ping.start(ctx.currentTime + 1.1);
-  ping.stop(ctx.currentTime + 2.1);
-
-  // Layer 5: warm welcome chord underneath the ping
-  var chordFreqs = [261, 329, 392, 523];
-  for (var c = 0; c < chordFreqs.length; c++) {
-    (function(freq) {
+  // Layer 3: Cascading tick sequence - system initializing
+  var tickSeq = [0.5, 0.65, 0.75, 0.82, 0.87, 0.91, 0.94, 0.96, 0.98, 1.0];
+  var tickFreqs = [800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1800];
+  for (var t = 0; t < tickSeq.length; t++) {
+    (function(time, freq) {
       var osc = ctx.createOscillator();
       var gain = ctx.createGain();
+      var filter = ctx.createBiquadFilter();
       osc.type = 'sine';
       osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0, ctx.currentTime + 1.1);
-      gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 1.3);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + 1.1);
-      osc.stop(ctx.currentTime + 2.6);
-    })(chordFreqs[c]);
+      filter.type = 'bandpass';
+      filter.frequency.value = freq;
+      filter.Q.value = 6;
+      gain.gain.setValueAtTime(0.06, ctx.currentTime + time);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + time + 0.07);
+      osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + time);
+      osc.stop(ctx.currentTime + time + 0.08);
+    })(tickSeq[t], tickFreqs[t]);
   }
-}
 
-// LASER CLICK - orbit button
-function playLaser() {
-  var ctx = getCtx();
-  if (!ctx) return;
-  var osc = ctx.createOscillator();
-  var gain = ctx.createGain();
-  var filter = ctx.createBiquadFilter();
-  osc.type = 'sawtooth';
-  osc.frequency.setValueAtTime(1200, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.25);
-  filter.type = 'bandpass';
-  filter.frequency.value = 800;
-  filter.Q.value = 2;
-  gain.gain.setValueAtTime(0.1, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-  osc.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(ctx.currentTime);
-  osc.stop(ctx.currentTime + 0.26);
-}
+  // Layer 4: "Welcome" moment - two tone arrival
+  var w1 = ctx.createOscillator();
+  var w1g = ctx.createGain();
+  w1.type = 'sine';
+  w1.frequency.setValueAtTime(880, ctx.currentTime + 1.15);
+  w1.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 1.25);
+  w1g.gain.setValueAtTime(0, ctx.currentTime + 1.15);
+  w1g.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1.2);
+  w1g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.6);
+  w1.connect(w1g); w1g.connect(ctx.destination);
+  w1.start(ctx.currentTime + 1.15); w1.stop(ctx.currentTime + 1.65);
 
-// BLIP - chatbot open
-function playBlip() {
-  var ctx = getCtx();
-  if (!ctx) return;
-  var freqs = [440, 660];
-  for (var i = 0; i < freqs.length; i++) {
+  var w2 = ctx.createOscillator();
+  var w2g = ctx.createGain();
+  w2.type = 'sine';
+  w2.frequency.setValueAtTime(1320, ctx.currentTime + 1.35);
+  w2g.gain.setValueAtTime(0, ctx.currentTime + 1.35);
+  w2g.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 1.4);
+  w2g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.2);
+  w2.connect(w2g); w2g.connect(ctx.destination);
+  w2.start(ctx.currentTime + 1.35); w2.stop(ctx.currentTime + 2.3);
+
+  // Layer 5: ambient shimmer tail
+  var shimFreqs = [2093, 2637, 3136];
+  for (var s = 0; s < shimFreqs.length; s++) {
     (function(freq, delay) {
       var osc = ctx.createOscillator();
       var gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.07, ctx.currentTime + delay);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.12);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + 0.13);
-    })(freqs[i], i * 0.1);
+      gain.gain.setValueAtTime(0, ctx.currentTime + 1.5 + delay);
+      gain.gain.linearRampToValueAtTime(0.025, ctx.currentTime + 1.55 + delay);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.8 + delay);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + 1.5 + delay);
+      osc.stop(ctx.currentTime + 2.9 + delay);
+    })(shimFreqs[s], s * 0.08);
   }
-}
-
-// SUCCESS CHIME - form sent
-function playChime() {
-  var ctx = getCtx();
-  if (!ctx) return;
-  var notes = [523, 659, 784, 1047];
-  for (var i = 0; i < notes.length; i++) {
-    (function(freq, delay) {
-      var osc = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + delay + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.4);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + 0.5);
-    })(notes[i], i * 0.1);
-  }
-}
-
-// NAV TICK - subtle hover tick
-function playTick() {
-  var ctx = getCtx();
-  if (!ctx) return;
-  var osc = ctx.createOscillator();
-  var gain = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.value = 1400;
-  gain.gain.setValueAtTime(0.03, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(ctx.currentTime);
-  osc.stop(ctx.currentTime + 0.06);
-}
-
-// WHOOSH - section scroll
-function playWhoosh() {
-  var ctx = getCtx();
-  if (!ctx) return;
-  var buf = ctx.createBuffer(1, ctx.sampleRate * 0.3, ctx.sampleRate);
-  var data = buf.getChannelData(0);
-  for (var i = 0; i < data.length; i++) {
-    data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) * 0.15;
-  }
-  var src = ctx.createBufferSource();
-  var filter = ctx.createBiquadFilter();
-  var gain = ctx.createGain();
-  filter.type = 'bandpass';
-  filter.frequency.setValueAtTime(2000, ctx.currentTime);
-  filter.frequency.linearRampToValueAtTime(400, ctx.currentTime + 0.3);
-  filter.Q.value = 1;
-  gain.gain.setValueAtTime(0.2, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
-  src.buffer = buf;
-  src.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  src.start(ctx.currentTime);
 }
 
 // ── BOOT ON LOAD ──
@@ -231,6 +243,7 @@ document.querySelectorAll('a, button, .pc, .sgr, .sc, .ec, .course-chip, .orbit-
   el.addEventListener('mouseenter', function() {
     cur.style.width = '22px'; cur.style.height = '22px';
     cur.style.background = 'var(--accent2)';
+    try { playTick('click'); } catch(e) {}
   });
   el.addEventListener('mouseleave', function() {
     cur.style.width = '14px'; cur.style.height = '14px';
@@ -238,20 +251,12 @@ document.querySelectorAll('a, button, .pc, .sgr, .sc, .ec, .course-chip, .orbit-
   });
 });
 
-// NAV TICK on hover
+// NAV - soft tick on hover
 document.querySelectorAll('.nav-links a').forEach(function(el) {
   el.addEventListener('mouseenter', function() {
-    try { playTick(); } catch(e) {}
+    try { playTick('soft'); } catch(e) {}
   });
 });
-
-// ORBIT BUTTON laser click
-var orbitBtn = document.querySelector('.orbit-btn');
-if (orbitBtn) {
-  orbitBtn.addEventListener('click', function() {
-    try { playLaser(); } catch(e) {}
-  });
-}
 
 // ── PARTICLES ──
 var canvas = document.getElementById('bg-canvas');
@@ -293,14 +298,11 @@ function drawParticles() {
 }
 drawParticles();
 
-// ── SCROLL REVEAL + WHOOSH ──
+// ── SCROLL REVEAL + SECTION TICK ──
 var lastSection = '';
 var obs = new IntersectionObserver(function(entries) {
   entries.forEach(function(e) {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      obs.unobserve(e.target);
-    }
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
   });
 }, { threshold: 0.05 });
 document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
@@ -308,18 +310,15 @@ setTimeout(function() {
   document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
 }, 2000);
 
-// Section whoosh on scroll
 var sectionObserver = new IntersectionObserver(function(entries) {
   entries.forEach(function(e) {
     if (e.isIntersecting && e.target.id && e.target.id !== lastSection) {
       lastSection = e.target.id;
-      try { playWhoosh(); } catch(err) {}
+      try { playTick('section'); } catch(err) {}
     }
   });
 }, { threshold: 0.4 });
-document.querySelectorAll('.section-page').forEach(function(el) {
-  sectionObserver.observe(el);
-});
+document.querySelectorAll('.section-page').forEach(function(el) { sectionObserver.observe(el); });
 
 // ── COUNT UP ──
 function countUp(el) {
@@ -358,7 +357,7 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
       document.getElementById('formSuccess').style.display = 'block';
       form.reset();
       btn.textContent = 'Sent!';
-      try { playChime(); } catch(err) {}
+      try { playTick('form'); } catch(err) {}
     } else { btn.textContent = 'Error - Try Again'; }
   }).catch(function() { btn.textContent = 'Error - Try Again'; });
 });
@@ -369,9 +368,12 @@ var chatWindow = document.getElementById('chatWindow');
 var chatClose = document.getElementById('chatClose');
 chatToggle.addEventListener('click', function() {
   chatWindow.classList.toggle('open');
-  try { playBlip(); } catch(err) {}
+  try { playTick('open'); } catch(err) {}
 });
-chatClose.addEventListener('click', function() { chatWindow.classList.remove('open'); });
+chatClose.addEventListener('click', function() {
+  chatWindow.classList.remove('open');
+  try { playTick('soft'); } catch(err) {}
+});
 
 var chatMessages = document.getElementById('chatMessages');
 var chatInput = document.getElementById('chatInput');
@@ -402,20 +404,14 @@ function sendMessage() {
   appendMsg(msg, 'user');
   chatHistory.push({ role: 'user', content: msg });
   var typing = appendTyping();
-  fetch('https://api.anthropic.com/v1/messages', {
+  fetch('/.netlify/functions/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: CONTEXT,
-      messages: chatHistory
-    })
+    body: JSON.stringify({ messages: chatHistory, system: CONTEXT })
   }).then(function(res) { return res.json(); })
     .then(function(data) {
       typing.remove();
-      var reply = (data.content && data.content[0] && data.content[0].text)
-        ? data.content[0].text : 'Sorry, I could not get a response. Please try again.';
+      var reply = data.reply || 'Sorry, I could not get a response. Please try again.';
       appendMsg(reply, 'bot');
       chatHistory.push({ role: 'assistant', content: reply });
     }).catch(function() {
