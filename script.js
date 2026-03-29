@@ -379,20 +379,12 @@ function sendMessage() {
   appendMsg(msg, 'user');
   chatHistory.push({ role: 'user', content: msg });
   var typing = appendTyping();
-  fetch('https://dhruba-chat.dhrubax101.workers.dev', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages: chatHistory, system: CONTEXT })
-  }).then(function(res) { return res.json(); })
-    .then(function(data) {
-      typing.remove();
-      var reply = data.reply || 'Sorry, I could not get a response. Please try again.';
-      appendMsg(reply, 'bot');
-      chatHistory.push({ role: 'assistant', content: reply });
-    }).catch(function() {
-      typing.remove();
-      appendMsg('Connection error. Please try again later.', 'bot');
-    });
+  setTimeout(function() {
+    typing.remove();
+    var reply = getBotReply(msg);
+    appendMsg(reply, 'bot');
+    chatHistory.push({ role: 'assistant', content: reply });
+  }, 600);
 }
 chatSend.addEventListener('click', sendMessage);
 chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMessage(); });
