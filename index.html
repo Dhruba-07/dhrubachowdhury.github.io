@@ -91,6 +91,58 @@
   .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .tag { font-size: 0.7rem; padding: 3px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 100px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
 
+  /* ── FEATURED PROJECT CARD ── */
+  .project-card.featured {
+    border-color: var(--accent);
+    grid-column: 1 / -1;
+  }
+  .project-card.featured .project-header {
+    background: var(--accent);
+    padding: 2rem 2rem;
+  }
+  .project-card.featured .project-icon { font-size: 2.4rem; }
+  .project-card.featured .project-year { color: rgba(255,255,255,0.7); }
+  .project-card.featured .project-body { padding: 2rem; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: start; }
+  .project-card.featured .project-title { font-size: 1.5rem; margin-bottom: 0.6rem; }
+  .featured-badge {
+    display: inline-block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; background: rgba(255,255,255,0.15); color: #fff;
+    padding: 3px 10px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.3);
+    margin-bottom: 0.6rem;
+  }
+  .featured-header-content { display: flex; flex-direction: column; }
+  .featured-header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .featured-header-sub {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 0.3rem;
+    font-weight: 300;
+  }
+  .project-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.8rem; font-weight: 500; color: var(--accent);
+    background: var(--accent-light); border: 1px solid #b8d0be;
+    padding: 8px 16px; border-radius: 4px; text-decoration: none;
+    transition: background 0.2s; white-space: nowrap; align-self: flex-start;
+    margin-top: 1rem;
+  }
+  .project-link:hover { background: #d4e4d8; }
+  .featured-highlights {
+    display: flex; flex-wrap: wrap; gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .highlight-pill {
+    font-size: 0.75rem; color: var(--accent); font-weight: 500;
+    background: var(--accent-light); border: 1px solid #b8d0be;
+    padding: 4px 12px; border-radius: 100px;
+    display: flex; align-items: center; gap: 5px;
+  }
+
   #contact { text-align: center; }
   .contact-card { background: var(--accent); border-radius: 16px; padding: 4rem 3rem; margin-top: 2rem; color: #fff; }
   .contact-card .section-title { color: #fff; margin: 0 auto 1rem; }
@@ -108,6 +160,7 @@
     nav { padding: 0 1rem; }
     .nav-links { gap: 1.2rem; }
     section { padding: 80px 6%; }
+    .project-card.featured .project-body { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -242,6 +295,45 @@
   <p style="color: var(--muted); font-weight: 300; max-width: 560px; margin-bottom: 2rem; font-size: 0.9rem; font-style: italic;">Based on my UIC coursework — updated as projects and lab reports are completed each semester.</p>
   <div class="projects-grid">
 
+    <!-- ── FEATURED: PCM BRICK PROJECT ── -->
+    <div class="project-card featured">
+      <div class="project-header">
+        <div class="featured-header-content">
+          <span class="featured-badge">Featured · CHE 201 · Spring 2026</span>
+          <div class="featured-header-title">Phase-Change Material Smart Bricks</div>
+          <div class="featured-header-sub">Sustainable Design Project — Passive thermal regulation using PCM-embedded building bricks</div>
+        </div>
+        <span class="project-year">2026</span>
+      </div>
+      <div class="project-body">
+        <div>
+          <p class="project-desc">
+            Designed a sustainable building brick embedded with phase-change materials (PCMs) such as paraffin wax to passively regulate indoor temperature — absorbing heat during the day and releasing it at night with zero electricity consumption. The project covered full thermodynamic analysis including mass & energy balances, entropy calculations (ΔS = ΔH/T), Life Cycle Analysis, and economic feasibility. Backed by peer-reviewed research showing up to 30% energy reduction and a 9.5°C indoor temperature drop versus conventional bricks.
+          </p>
+          <div class="featured-highlights">
+            <span class="highlight-pill">🌡️ 30% energy reduction</span>
+            <span class="highlight-pill">❄️ 9.5°C indoor temp drop</span>
+            <span class="highlight-pill">♻️ Zero electricity</span>
+            <span class="highlight-pill">📐 SolidWorks prototype</span>
+          </div>
+          <div class="project-tags">
+            <span class="tag">Phase-Change Materials</span>
+            <span class="tag">Thermodynamics</span>
+            <span class="tag">Mass & Energy Balance</span>
+            <span class="tag">Life Cycle Analysis</span>
+            <span class="tag">Sustainable Design</span>
+            <span class="tag">CHE 201</span>
+          </div>
+        </div>
+        <div>
+          <a href="pcm_brick_presentation.html" target="_blank" class="project-link">
+            View Presentation →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- existing cards -->
     <div class="project-card">
       <div class="project-header"><span class="project-icon">🌡️</span><span class="project-year">2026</span></div>
       <div class="project-body">
@@ -304,7 +396,8 @@
   <div class="contact-card">
     <h2 class="section-title">Open to Opportunities</h2>
     <p>I'm actively seeking internship opportunities in chemical engineering, process design, or related industries for Summer 2026 and beyond. Let's connect!</p>
-    <div class="contact-links"><a href="mailto:dchow6@uic.edu" class="contact-link">✉ dchow6@uic.edu</a>
+    <div class="contact-links">
+      <a href="mailto:dchow6@uic.edu" class="contact-link">✉ dchow6@uic.edu</a>
       <a href="tel:+13128689101" class="contact-link">📞 (312) 868-9101</a>
       <a href="https://www.linkedin.com/in/dchowdhury007/" class="contact-link">in LinkedIn</a>
     </div>
@@ -312,4 +405,8 @@
 </section>
 
 <footer>
-  <
+  <p>© 2026 Dhruba Chowdhury · Chemical Engineering · University of Illinois Chicago</p>
+</footer>
+
+</body>
+</html>
