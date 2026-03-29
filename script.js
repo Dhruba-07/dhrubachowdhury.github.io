@@ -1,4 +1,4 @@
-// ── AUDIO ENGINE ──
+// ── AUDIO ENGINE ── R&B Bassy Modern ──
 var audioCtx = null;
 function getCtx() {
   if (!audioCtx) {
@@ -8,183 +8,204 @@ function getCtx() {
   return audioCtx;
 }
 
-// ── PORTAL - intro landing sound (deep cinematic portal open) ──
+// Shared compressor for all sounds - glues everything together
+function makeCompressor(ctx) {
+  var comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -18;
+  comp.knee.value = 8;
+  comp.ratio.value = 4;
+  comp.attack.value = 0.003;
+  comp.release.value = 0.15;
+  comp.connect(ctx.destination);
+  return comp;
+}
+
+// ── INTRO - Deep R&B landing (warm, bassy, soulful) ──
 function playPortal() {
   var ctx = getCtx();
   if (!ctx) return;
+  var comp = makeCompressor(ctx);
 
-  // Sub bass pulse
+  // Deep 808-style sub bass hit
   var sub = ctx.createOscillator();
   var subGain = ctx.createGain();
   sub.type = 'sine';
   sub.frequency.setValueAtTime(55, ctx.currentTime);
-  sub.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 1.5);
+  sub.frequency.exponentialRampToValueAtTime(35, ctx.currentTime + 1.2);
   subGain.gain.setValueAtTime(0, ctx.currentTime);
-  subGain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.3);
-  subGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.8);
-  sub.connect(subGain); subGain.connect(ctx.destination);
-  sub.start(ctx.currentTime); sub.stop(ctx.currentTime + 1.9);
+  subGain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
+  subGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.6);
+  sub.connect(subGain); subGain.connect(comp);
+  sub.start(ctx.currentTime); sub.stop(ctx.currentTime + 1.7);
 
-  // Portal shimmer - rising harmonic sweep
-  var shimFreqs = [220, 330, 440, 550, 660];
-  for (var i = 0; i < shimFreqs.length; i++) {
+  // Mid bass body - warm and round
+  var mid = ctx.createOscillator();
+  var midGain = ctx.createGain();
+  var midFilter = ctx.createBiquadFilter();
+  mid.type = 'triangle';
+  mid.frequency.setValueAtTime(110, ctx.currentTime);
+  mid.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 1.0);
+  midFilter.type = 'lowpass';
+  midFilter.frequency.value = 400;
+  midFilter.Q.value = 1;
+  midGain.gain.setValueAtTime(0, ctx.currentTime);
+  midGain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.08);
+  midGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.4);
+  mid.connect(midFilter); midFilter.connect(midGain); midGain.connect(comp);
+  mid.start(ctx.currentTime); mid.stop(ctx.currentTime + 1.5);
+
+  // Warm chord swell - R&B major 7th feel
+  var chordFreqs = [130, 164, 196, 246];
+  for (var i = 0; i < chordFreqs.length; i++) {
     (function(freq, delay) {
       var osc = ctx.createOscillator();
       var gain = ctx.createGain();
       var filter = ctx.createBiquadFilter();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq * 0.5, ctx.currentTime + delay);
-      osc.frequency.exponentialRampToValueAtTime(freq, ctx.currentTime + delay + 0.8);
-      filter.type = 'bandpass';
-      filter.frequency.value = freq;
-      filter.Q.value = 4;
-      gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-      gain.gain.linearRampToValueAtTime(0.04, ctx.currentTime + delay + 0.1);
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + delay + 1.0);
-      osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + 1.1);
-    })(shimFreqs[i], i * 0.12);
-  }
-
-  // Cascading ticks - system boot
-  var tickTimes = [0.7, 0.82, 0.9, 0.96, 1.01, 1.05, 1.08, 1.10];
-  var tickFreqs = [900, 1000, 1100, 1200, 1400, 1600, 1800, 2000];
-  for (var t = 0; t < tickTimes.length; t++) {
-    (function(time, freq) {
-      var osc = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.type = 'sine';
       osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.06, ctx.currentTime + time);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + time + 0.06);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + time);
-      osc.stop(ctx.currentTime + time + 0.07);
-    })(tickTimes[t], tickFreqs[t]);
+      filter.type = 'lowpass';
+      filter.frequency.value = 600;
+      gain.gain.setValueAtTime(0, ctx.currentTime + 0.3 + delay);
+      gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.5 + delay);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.0 + delay);
+      osc.connect(filter); filter.connect(gain); gain.connect(comp);
+      osc.start(ctx.currentTime + 0.3 + delay);
+      osc.stop(ctx.currentTime + 2.1 + delay);
+    })(chordFreqs[i], i * 0.06);
   }
 
-  // Final arrival tone - warm
-  var arr = ctx.createOscillator();
-  var arrGain = ctx.createGain();
-  arr.type = 'sine';
-  arr.frequency.setValueAtTime(1320, ctx.currentTime + 1.15);
-  arrGain.gain.setValueAtTime(0, ctx.currentTime + 1.15);
-  arrGain.gain.linearRampToValueAtTime(0.09, ctx.currentTime + 1.2);
-  arrGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.4);
-  arr.connect(arrGain); arrGain.connect(ctx.destination);
-  arr.start(ctx.currentTime + 1.15); arr.stop(ctx.currentTime + 2.5);
+  // Soft high note resolve - smooth not bright
+  var resolve = ctx.createOscillator();
+  var resolveGain = ctx.createGain();
+  var resolveFilter = ctx.createBiquadFilter();
+  resolve.type = 'sine';
+  resolve.frequency.setValueAtTime(392, ctx.currentTime + 1.1);
+  resolveFilter.type = 'lowpass';
+  resolveFilter.frequency.value = 800;
+  resolveGain.gain.setValueAtTime(0, ctx.currentTime + 1.1);
+  resolveGain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 1.2);
+  resolveGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
+  resolve.connect(resolveFilter); resolveFilter.connect(resolveGain); resolveGain.connect(comp);
+  resolve.start(ctx.currentTime + 1.1); resolve.stop(ctx.currentTime + 2.6);
 }
 
-// ── CHORD - iPhone chord tone (nav hover) ──
+// ── NAV HOVER - soft warm bass tap ──
 function playChord() {
   var ctx = getCtx();
   if (!ctx) return;
-  // Major chord: root, major third, fifth
-  var freqs = [523.25, 659.25, 783.99];
+  var comp = makeCompressor(ctx);
+  var freqs = [130, 164, 196];
   for (var i = 0; i < freqs.length; i++) {
     (function(freq, delay) {
       var osc = ctx.createOscillator();
       var gain = ctx.createGain();
+      var filter = ctx.createBiquadFilter();
       osc.type = 'sine';
       osc.frequency.value = freq;
+      filter.type = 'lowpass';
+      filter.frequency.value = 500;
       gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-      gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + delay + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.5);
-      osc.connect(gain); gain.connect(ctx.destination);
+      gain.gain.linearRampToValueAtTime(0.05, ctx.currentTime + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.35);
+      osc.connect(filter); filter.connect(gain); gain.connect(comp);
       osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + 0.6);
-    })(freqs[i], i * 0.02);
+      osc.stop(ctx.currentTime + delay + 0.4);
+    })(freqs[i], i * 0.015);
   }
 }
 
-// ── DROPLET - iPhone droplet (card hover) ──
+// ── CARD HOVER - deep bass pulse ──
 function playDroplet() {
   var ctx = getCtx();
   if (!ctx) return;
-  var osc = ctx.createOscillator();
-  var gain = ctx.createGain();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(1800, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.18);
-  gain.gain.setValueAtTime(0, ctx.currentTime);
-  gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-  osc.connect(gain); gain.connect(ctx.destination);
-  osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.22);
-}
-
-// ── REBOUND - iPhone rebound (chatbot open) ──
-function playRebound() {
-  var ctx = getCtx();
-  if (!ctx) return;
-  // Two bounces
-  var bounces = [
-    { start: 0,    freq1: 800,  freq2: 1200 },
-    { start: 0.14, freq1: 1000, freq2: 1400 }
-  ];
-  for (var b = 0; b < bounces.length; b++) {
-    (function(bounce) {
-      var osc = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(bounce.freq1, ctx.currentTime + bounce.start);
-      osc.frequency.exponentialRampToValueAtTime(bounce.freq2, ctx.currentTime + bounce.start + 0.06);
-      osc.frequency.exponentialRampToValueAtTime(bounce.freq1 * 0.9, ctx.currentTime + bounce.start + 0.1);
-      gain.gain.setValueAtTime(0, ctx.currentTime + bounce.start);
-      gain.gain.linearRampToValueAtTime(0.09, ctx.currentTime + bounce.start + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + bounce.start + 0.13);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + bounce.start);
-      osc.stop(ctx.currentTime + bounce.start + 0.15);
-    })(bounces[b]);
-  }
-}
-
-// ── CIRCLES - iPhone circles (form submit success) ──
-function playCircles() {
-  var ctx = getCtx();
-  if (!ctx) return;
-  // Expanding circle tones - 4 rings rippling out
-  var rings = [
-    { time: 0,    freq: 880,  dur: 0.6 },
-    { time: 0.15, freq: 1108, dur: 0.55 },
-    { time: 0.28, freq: 1318, dur: 0.5 },
-    { time: 0.38, freq: 1760, dur: 0.45 }
-  ];
-  for (var r = 0; r < rings.length; r++) {
-    (function(ring) {
-      var osc = ctx.createOscillator();
-      var gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = ring.freq;
-      gain.gain.setValueAtTime(0, ctx.currentTime + ring.time);
-      gain.gain.linearRampToValueAtTime(0.07, ctx.currentTime + ring.time + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + ring.time + ring.dur);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + ring.time);
-      osc.stop(ctx.currentTime + ring.time + ring.dur + 0.05);
-    })(rings[r]);
-  }
-}
-
-// ── SECTION TICK - crisp single tick on scroll ──
-function playSectionTick() {
-  var ctx = getCtx();
-  if (!ctx) return;
+  var comp = makeCompressor(ctx);
   var osc = ctx.createOscillator();
   var gain = ctx.createGain();
   var filter = ctx.createBiquadFilter();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(2400, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.05);
-  filter.type = 'bandpass';
-  filter.frequency.value = 2000;
-  filter.Q.value = 3;
-  gain.gain.setValueAtTime(0.05, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
-  osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-  osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.08);
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(120, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.2);
+  filter.type = 'lowpass';
+  filter.frequency.value = 300;
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+  osc.connect(filter); filter.connect(gain); gain.connect(comp);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.28);
+}
+
+// ── CHATBOT OPEN - smooth R&B two-note bass ──
+function playRebound() {
+  var ctx = getCtx();
+  if (!ctx) return;
+  var comp = makeCompressor(ctx);
+  var notes = [
+    { freq: 98,  time: 0    },
+    { freq: 130, time: 0.18 }
+  ];
+  for (var i = 0; i < notes.length; i++) {
+    (function(note) {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      var filter = ctx.createBiquadFilter();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(note.freq, ctx.currentTime + note.time);
+      osc.frequency.exponentialRampToValueAtTime(note.freq * 0.8, ctx.currentTime + note.time + 0.25);
+      filter.type = 'lowpass';
+      filter.frequency.value = 400;
+      gain.gain.setValueAtTime(0, ctx.currentTime + note.time);
+      gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + note.time + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + note.time + 0.3);
+      osc.connect(filter); filter.connect(gain); gain.connect(comp);
+      osc.start(ctx.currentTime + note.time);
+      osc.stop(ctx.currentTime + note.time + 0.35);
+    })(notes[i]);
+  }
+}
+
+// ── FORM SUCCESS - warm R&B resolution chord ──
+function playCircles() {
+  var ctx = getCtx();
+  if (!ctx) return;
+  var comp = makeCompressor(ctx);
+  var chord = [98, 123, 146, 196];
+  for (var i = 0; i < chord.length; i++) {
+    (function(freq, delay) {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      var filter = ctx.createBiquadFilter();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      filter.type = 'lowpass';
+      filter.frequency.value = 600;
+      gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+      gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + delay + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.8);
+      osc.connect(filter); filter.connect(gain); gain.connect(comp);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.9);
+    })(chord[i], i * 0.12);
+  }
+}
+
+// ── SECTION SCROLL - deep bass tick ──
+function playSectionTick() {
+  var ctx = getCtx();
+  if (!ctx) return;
+  var comp = makeCompressor(ctx);
+  var osc = ctx.createOscillator();
+  var gain = ctx.createGain();
+  var filter = ctx.createBiquadFilter();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(150, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.08);
+  filter.type = 'lowpass';
+  filter.frequency.value = 350;
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+  osc.connect(filter); filter.connect(gain); gain.connect(comp);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.12);
 }
 
 // ── BOOT ON LOAD ──
@@ -372,6 +393,27 @@ function appendTyping() {
   chatMessages.scrollTop = chatMessages.scrollHeight;
   return d;
 }
+
+// ── KEYWORD CHATBOT ──
+function getBotReply(msg) {
+  var m = msg.toLowerCase();
+  if (m.match(/hi|hello|hey|sup|greet/)) return "Hey! Great to meet you. I am Dhruba's assistant. Ask me about his skills, projects, experience, or how to contact him!";
+  if (m.match(/who|dhruba|about|yourself/)) return "Dhruba Chowdhury is a Chemical Engineering student at UIC (Class of 2028). He works as a Lab Assistant at the ODES Lab and as a K-12 tutor in Chicago. He is passionate about sustainable design and thermodynamics.";
+  if (m.match(/lab|odes|research|polymer|rheology|soft matter|vivek|sharma/)) return "Dhruba works at the ODES Lab under Prof. Vivek Sharma at UIC. His research focuses on polymer and soft matter physics, scaling and dimensional analysis, and rheology and mechanics. Visit viveksharmalab.com to learn more!";
+  if (m.match(/project|pcm|brick|phase|thermal|sustainable/)) return "His featured project is Phase-Change Material Smart Bricks for CHE 201 (Spring 2026). PCM-embedded bricks passively regulate indoor temperature with zero electricity — showing 30% energy reduction and a 9.5 degree temperature drop vs conventional bricks!";
+  if (m.match(/skill|know|can|good at|expertise/)) return "Dhruba is skilled in Thermodynamics, Mass and Energy Balances, Analytical Chemistry, Computational Methods, Rheology, Mathematical Modeling, and Technical Writing. Check the Skills section for the full list!";
+  if (m.match(/course|class|study|major|che|chem|math/)) return "Dhruba has taken CHE 201, CHE 205, CHE 230, CHEM 222, CHEM 232, MATH 180-220, PHYS 141, and ENGL 160-161. Hover over the course chips in the Skills section to see full names!";
+  if (m.match(/intern|job|hire|opportunit|work|recruit|position/)) return "Dhruba is actively seeking internships in chemical engineering or process design for Summer 2026. Reach out at dchow6@uic.edu or connect on LinkedIn!";
+  if (m.match(/contact|email|phone|reach|linkedin|connect/)) return "You can reach Dhruba at dchow6@uic.edu, call (312) 868-9101, or connect on LinkedIn at linkedin.com/in/dchowdhury007. Use the contact form on the site too!";
+  if (m.match(/tutor|teach|education|student|k-12|school/)) return "Dhruba works as a K-12 Academic Tutor in Chicago since November 2025, providing one-on-one and small group support across multiple subjects. He loves helping students build confidence!";
+  if (m.match(/uic|illinois|chicago|university/)) return "Dhruba attends the University of Illinois Chicago (UIC), studying Chemical Engineering with an expected graduation of April 2028.";
+  if (m.match(/graduation|graduate|year|class|2028/)) return "Dhruba is expected to graduate in April 2028 with a B.S. in Chemical Engineering from UIC.";
+  if (m.match(/sound|music|audio|noise/)) return "The site uses custom Web Audio API sounds inspired by iPhone tones. Portal intro, chord on nav hover, droplet on cards, rebound on chat open, and circles when you submit the contact form!";
+  if (m.match(/thank|thanks|cool|great|awesome|nice/)) return "Thank you! Feel free to ask anything else about Dhruba. You can also reach him directly at dchow6@uic.edu!";
+  if (m.match(/bye|goodbye|see you|later/)) return "Goodbye! Feel free to come back anytime. You can also reach Dhruba at dchow6@uic.edu!";
+  return "Great question! I am not sure about that specific topic. Try asking about Dhruba's skills, projects, research, or how to contact him. Or reach out directly at dchow6@uic.edu!";
+}
+
 function sendMessage() {
   var msg = chatInput.value.trim();
   if (!msg) return;
