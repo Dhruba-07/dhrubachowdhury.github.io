@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCM Smart Bricks — CHE 201</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #13131a;
+    --accent: #ff6b2b;
+    --cool: #2bd4ff;
+    --warm: #ff9f2b;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --border: rgba(255,255,255,0.07);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255,107,43,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(43,212,255,0.08) 0%, transparent 60%);
+  }
+
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes gridPulse {
+    0%,100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: rgba(255,107,43,0.1);
+    border: 1px solid rgba(255,107,43,0.3);
+    padding: 0.4rem 1rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    animation: fadeInDown 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 12vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    animation: fadeInUp 1s ease 0.3s forwards;
+    opacity: 0;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 1.5rem auto 0;
+    line-height: 1.7;
+    animation: fadeInUp 1s ease 0.6s forwards;
+    opacity: 0;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    animation: bounce 2s ease-in-out infinite, fadeInUp 1s ease 1.2s forwards;
+    opacity: 0;
+  }
+
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* ── SECTIONS ── */
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-works {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brick-viz {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    height: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2.5rem 0;
+    position: relative;
+  }
+
+  .brick-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    gap: 0.75rem;
+    position: relative;
+    transition: all 0.4s ease;
+  }
+
+  .day-side {
+    background: linear-gradient(135deg, rgba(255,159,43,0.2), rgba(255,107,43,0.1));
+    border-right: 1px solid var(--border);
+  }
+
+  .night-side {
+    background: linear-gradient(135deg, rgba(43,212,255,0.1), rgba(43,100,255,0.15));
+  }
+
+  .sun-icon {
+    font-size: 2.5rem;
+    animation: spin 10s linear infinite;
+  }
+
+  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  .moon-icon { font-size: 2.5rem; animation: sway 4s ease-in-out infinite; }
+  @keyframes sway { 0%,100%{transform:rotate(-10deg)} 50%{transform:rotate(10deg)} }
+
+  .side-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .side-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .heat-arrow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .arrow-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+
+  /* ── CYCLE ANIMATION ── */
+  .cycle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 2.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .cycle-step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 1.2rem;
+    text-align: center;
+    width: 160px;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .cycle-step.visible {
+    animation: stepIn 0.6s ease forwards;
+  }
+
+  @keyframes stepIn { to { opacity:1; transform:translateY(0); } }
+
+  .cycle-step .step-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .cycle-step .step-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+  .cycle-step p { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
+
+  .cycle-arrow {
+    font-size: 1.5rem;
+    color: var(--accent);
+    margin: 0 0.5rem;
+    animation: arrowPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes arrowPulse { 0%,100%{opacity:0.4; transform:translateX(0)} 50%{opacity:1; transform:translateX(4px)} }
+
+  /* ── STATS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  .stat-card.visible { animation: stepIn 0.7s ease forwards; }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--accent);
+    line-height: 1;
+    counter-reset: num;
+  }
+
+  .stat-unit {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .stat-desc { font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem; line-height: 1.5; }
+
+  /* ── COUNTER ANIMATION ── */
+  .count-up { display: inline-block; }
+
+  /* ── WHERE TO USE ── */
+  .use-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.2rem;
+    margin-top: 2rem;
+  }
+
+  .use-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.8rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    transition: border-color 0.3s, transform 0.3s;
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  .use-card.visible { animation: slideIn 0.6s ease forwards; }
+  @keyframes slideIn { to { opacity:1; transform:translateX(0); } }
+
+  .use-card:hover {
+    border-color: rgba(255,107,43,0.4);
+    transform: translateY(-4px);
+  }
+
+  .use-icon { font-size: 2rem; flex-shrink: 0; }
+  .use-text h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.3rem; }
+  .use-text p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── RESEARCH ── */
+  .research-list { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 2rem; }
+
+  .research-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem 1.8rem;
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+
+  .research-card.visible { animation: slideIn 0.6s ease forwards; }
+
+  .research-card .journal {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .research-card h3 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.5rem; }
+  .research-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  .research-card .finding {
+    margin-top: 0.75rem;
+    background: rgba(255,107,43,0.08);
+    border-radius: 6px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.82rem;
+    color: var(--text);
+    border-left: 2px solid var(--accent);
+  }
+
+  /* ── FORMULA ── */
+  .formula-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .formula {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    color: var(--cool);
+    margin: 1rem 0;
+    letter-spacing: 0.05em;
+  }
+
+  .formula span { color: var(--accent); }
+  .formula-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-top: 0.5rem; }
+
+  /* ── TEMP METER ── */
+  .meter-row {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .meter {
+    flex: 1;
+    min-width: 180px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .meter-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; }
+
+  .bar-track {
+    height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 0.8rem 0;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    width: 0%;
+    transition: width 2s ease;
+  }
+
+  .bar-fill.hot { background: linear-gradient(90deg, var(--warm), var(--accent)); }
+  .bar-fill.cool { background: linear-gradient(90deg, var(--cool), #6b8fff); }
+
+  .meter-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    line-height: 1;
+  }
+
+  /* ── FOOTER CTA ── */
+  .footer-cta {
+    text-align: center;
+    padding: 6rem 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-cta h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .footer-cta p { color: var(--muted); font-size: 1rem; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 0;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeInDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeInUp   { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Floating particles */
+  .particles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0%  { opacity:0; transform:translateY(0) scale(0); }
+    10% { opacity:0.6; }
+    90% { opacity:0.6; }
+    100%{ opacity:0; transform:translateY(-120vh) scale(1.5); }
+  }
+
+  /* Responsive */
+  @media(max-width:600px) {
+    .cycle-arrow { display:none; }
+    .cycle-step { width:130px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="grid-bg"></div>
+  <div class="particles" id="particles"></div>
+  <div class="tag">CHE 201 · Spring 2026 · Sustainable Design</div>
+  <h1>SMART<br><span>THERMAL</span><br>BRICKS</h1>
+  <p class="hero-sub">Phase-change materials embedded in building bricks that passively regulate indoor temperature — no electricity, no moving parts.</p>
+  <div class="scroll-hint">▼ &nbsp; SCROLL TO EXPLORE</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── WHAT IS IT ── -->
+<section>
+  <div class="section-label">01 — The Idea</div>
+  <h2 class="section-title">A BRICK THAT<br>THINKS IN HEAT</h2>
+
+  <div class="how-works">
+    <p style="color:var(--muted); line-height:1.8; max-width:680px;">
+      A phase-change material (PCM) — like paraffin wax or a salt hydrate — is encapsulated inside a honeycomb cavity within a standard building brick. When ambient temperature rises, the PCM <strong style="color:var(--warm)">melts</strong>, absorbing large amounts of energy without temperature change. At night, it <strong style="color:var(--cool)">solidifies</strong>, releasing that stored energy back — keeping rooms naturally stable.
+    </p>
+
+    <div class="brick-viz">
+      <div class="brick-side day-side">
+        <div class="sun-icon">☀️</div>
+        <div class="side-label" style="color:var(--warm)">Daytime</div>
+        <div class="side-desc">Heat enters wall<br>PCM <strong>melts</strong> → absorbs energy<br>Interior stays cool</div>
+      </div>
+      <div class="heat-arrow">
+        <div class="arrow-box">🔥</div>
+      </div>
+      <div class="brick-side night-side">
+        <div class="moon-icon">🌙</div>
+        <div class="side-label" style="color:var(--cool)">Nighttime</div>
+        <div class="side-desc">Temperature drops<br>PCM <strong>solidifies</strong> → releases heat<br>Interior stays warm</div>
+      </div>
+    </div>
+
+    <p style="font-family:'Space Mono',monospace; font-size:0.75rem; color:var(--muted); text-align:center;">
+      The secret: latent heat stores 5–14× more energy than sensible heat alone.
+    </p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── HOW THE CYCLE WORKS ── -->
+<section>
+  <div class="section-label">02 — The Cycle</div>
+  <h2 class="section-title">24-HOUR<br>HEAT CYCLE</h2>
+
+  <div class="cycle-container" id="cycle">
+    <div class="cycle-step" style="animation-delay:0.0s">
+      <div class="step-icon">🌡️</div>
+      <div class="step-name">Morning</div>
+      <p>Outside temp rises above 23–27°C threshold</p>
+    </div>
+    <div class="cycle-arrow">→</div>
+    <div class="cycle-step" style="animation-delay:0.2s">
+      <div class="step-icon">💧</div>
+      <div class="step-name">Melting</div>
+      <p>PCM absorbs heat silently as it changes phase</p>
+    </div>
+    <div class="cycle-arrow">→</div>
+    <div class="cycle-step" style="animation-delay:0.4s">
+      <div class="step-icon">🏠</div>
+      <div class="step-name">Afternoon</div>
+      <p>Room stays cool — no AC needed during peak hours</p>
+    </div>
+    <div class="cycle-arrow">→</div>
+    <div class="cycle-step" style="animation-delay:0.6s">
+      <div class="step-icon">❄️</div>
+      <div class="step-name">Night</div>
+      <p>PCM solidifies, releasing stored warmth into room</p>
+    </div>
+    <div class="cycle-arrow">→</div>
+    <div class="cycle-step" style="animation-delay:0.8s">
+      <div class="step-icon">🔄</div>
+      <div class="step-name">Reset</div>
+      <p>Ready for the next 24-hour cycle — indefinitely</p>
+    </div>
+  </div>
+
+  <!-- Thermodynamic Formula -->
+  <div class="formula-box">
+    <div class="section-label" style="margin-bottom:0.5rem">Key Thermodynamic Equations</div>
+    <div class="formula">Q = m × <span>L</span></div>
+    <div class="formula-desc">
+      Q = heat stored (kJ) &nbsp;|&nbsp; m = mass of PCM (kg) &nbsp;|&nbsp; <span style="color:var(--accent)">L</span> = latent heat of fusion (kJ/kg)<br>
+      Paraffin wax: L ≈ 200 kJ/kg &nbsp;&nbsp;·&nbsp;&nbsp; Salt hydrates: L ≈ 150–300 kJ/kg
+    </div>
+    <div class="formula" style="margin-top:1.5rem; color: var(--warm)">ΔS = ΔH<sub>fusion</sub> / T<sub>melt</sub></div>
+    <div class="formula-desc">Entropy change during phase transition — quantifiable and directly linked to thermodynamic efficiency.</div>
+  </div>
+
+  <!-- Temperature bars -->
+  <div class="meter-row" id="meters">
+    <div class="meter">
+      <div class="meter-label">CONVENTIONAL BRICK — INDOOR PEAK TEMP</div>
+      <div class="meter-val" style="color:var(--accent)">38°C</div>
+      <div class="bar-track"><div class="bar-fill hot" id="bar1"></div></div>
+      <div style="font-size:0.78rem; color:var(--muted)">Full heat transfer — uncomfortable</div>
+    </div>
+    <div class="meter">
+      <div class="meter-label">PCM BRICK — INDOOR PEAK TEMP</div>
+      <div class="meter-val" style="color:var(--cool)">28°C</div>
+      <div class="bar-track"><div class="bar-fill cool" id="bar2"></div></div>
+      <div style="font-size:0.78rem; color:var(--muted)">Up to 9.5°C cooler — peer-reviewed result</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── STATS ── -->
+<section>
+  <div class="section-label">03 — By the Numbers</div>
+  <h2 class="section-title">THE IMPACT<br>IN DATA</h2>
+
+  <div class="stats-grid" id="stats">
+    <div class="stat-card" style="animation-delay:0.0s">
+      <div class="stat-number"><span class="count-up" data-target="30">0</span>%</div>
+      <div class="stat-unit">ENERGY REDUCTION</div>
+      <div class="stat-desc">Optimized PCM integration can cut building heating & cooling energy use by up to 30%.</div>
+    </div>
+    <div class="stat-card" style="animation-delay:0.15s">
+      <div class="stat-number"><span class="count-up" data-target="9">0</span>.5°C</div>
+      <div class="stat-unit">TEMP REDUCTION</div>
+      <div class="stat-desc">Single-layer PCM bricks reduced indoor peak temperature by up to 9.5°C vs. standard bricks.</div>
+    </div>
+    <div class="stat-card" style="animation-delay:0.3s">
+      <div class="stat-number"><span class="count-up" data-target="60">0</span>%</div>
+      <div class="stat-unit">HEAT TRANSFER DROP</div>
+      <div class="stat-desc">Double-layer PCM bricks showed a 60% reduction in heat transfer vs. conventional bricks.</div>
+    </div>
+    <div class="stat-card" style="animation-delay:0.45s">
+      <div class="stat-number"><span class="count-up" data-target="40">0</span>%</div>
+      <div class="stat-unit">BUILDINGS' ENERGY SHARE</div>
+      <div class="stat-desc">Buildings consume ~40% of global final energy — walls alone account for 25% of building losses.</div>
+    </div>
+    <div class="stat-card" style="animation-delay:0.6s">
+      <div class="stat-number"><span class="count-up" data-target="79">0</span>%</div>
+      <div class="stat-unit">HEAT CAPACITY BOOST</div>
+      <div class="stat-desc">Adding 20% PCM content by weight increased brick heat capacity by ~79% in lab tests.</div>
+    </div>
+    <div class="stat-card" style="animation-delay:0.75s">
+      <div class="stat-number">15.5×</div>
+      <div class="stat-unit">LATENT HEAT GAIN</div>
+      <div class="stat-desc">Latent heat storage improved by a factor of 15.5 compared to standard compressed earth bricks.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── WHERE TO USE ── -->
+<section>
+  <div class="section-label">04 — Applications</div>
+  <h2 class="section-title">WHERE THESE<br>BRICKS SHINE</h2>
+  <p style="color:var(--muted); max-width:580px; line-height:1.8; margin-bottom:0.5rem;">
+    PCM bricks work best where outdoor temperatures swing significantly between day and night — maximizing the charge/discharge cycle.
+  </p>
+
+  <div class="use-grid" id="usecards">
+    <div class="use-card" style="animation-delay:0.0s">
+      <div class="use-icon">🏜️</div>
+      <div class="use-text">
+        <h3>Hot & Arid Climates</h3>
+        <p>Arizona, Middle East, India, North Africa — huge diurnal swings make every cycle count. AC costs cut dramatically.</p>
+      </div>
+    </div>
+    <div class="use-card" style="animation-delay:0.1s">
+      <div class="use-icon">🏘️</div>
+      <div class="use-text">
+        <h3>Affordable Housing</h3>
+        <p>In developing regions where AC is unaffordable, passive cooling saves lives during heat events — not just money.</p>
+      </div>
+    </div>
+    <div class="use-card" style="animation-delay:0.2s">
+      <div class="use-icon">🏫</div>
+      <div class="use-text">
+        <h3>Schools & Clinics</h3>
+        <p>Public buildings with large occupant loads benefit most — lower HVAC bills free budget for education and healthcare.</p>
+      </div>
+    </div>
+    <div class="use-card" style="animation-delay:0.3s">
+      <div class="use-icon">🏗️</div>
+      <div class="use-text">
+        <h3>New Construction</h3>
+        <p>Easiest to integrate during new builds — adds minimal structural weight and drops overall energy code requirements.</p>
+      </div>
+    </div>
+    <div class="use-card" style="animation-delay:0.4s">
+      <div class="use-icon">🔄</div>
+      <div class="use-text">
+        <h3>Retrofits</h3>
+        <p>PCM panels and boards can be added to existing interior walls — no demolition needed for existing buildings.</p>
+      </div>
+    </div>
+    <div class="use-card" style="animation-delay:0.5s">
+      <div class="use-icon">⚡</div>
+      <div class="use-text">
+        <h3>Grid Load Shifting</h3>
+        <p>Absorbing daytime heat reduces peak electricity demand — directly reducing strain on the power grid at crunch hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── RESEARCH ── -->
+<section>
+  <div class="section-label">05 — Peer-Reviewed Research</div>
+  <h2 class="section-title">BACKED BY<br>SCIENCE</h2>
+
+  <div class="research-list" id="research">
+    <div class="research-card" style="animation-delay:0.0s">
+      <div class="journal">ScienceDirect · Energy Storage · 2025</div>
+      <h3>Enhancing Thermal Performance in Concrete Bricks with Phase Change Materials</h3>
+      <p>Numerical study using ANSYS Fluent comparing RT37, RT42, and composite PCMs embedded in brick cavities.</p>
+      <div class="finding">🔬 Key finding: RT37 PCM lowered indoor temperature by 6.68°C, reduced heat gain by 4.65W, and cut CO₂ emissions by 0.112 kg/day per brick.</div>
+    </div>
+
+    <div class="research-card" style="animation-delay:0.15s">
+      <div class="journal">ScienceDirect · Energy Storage · 2025</div>
+      <h3>Eco-Friendly Compressed Earth Bricks Enhanced with Micro-Encapsulated PCM</h3>
+      <p>Experimental study varying PCM content 0–20% by weight, measuring mechanical and thermal performance across 5 melt-solidification cycles.</p>
+      <div class="finding">🔬 Key finding: 20% mPCM content increased heat capacity ~79% and improved latent heat storage by a factor of 15.5, while maintaining structural requirements.</div>
+    </div>
+
+    <div class="research-card" style="animation-delay:0.3s">
+      <div class="journal">MDPI Materials · 2025</div>
+      <h3>Phase Change Materials in Residential Buildings: Challenges, Opportunities, and Performance</h3>
+      <p>Systematic literature review (PRISMA guidelines) covering 2015–2025 studies on PCM integration in walls, floors, ceilings, and windows.</p>
+      <div class="finding">🔬 Key finding: Optimized PCM integration can reduce building energy consumption by up to 30% and improve indoor thermal comfort.</div>
+    </div>
+
+    <div class="research-card" style="animation-delay:0.45s">
+      <div class="journal">ScienceDirect · Energy Buildings · 2022</div>
+      <h3>Year-Long Energy Analysis of Building Brick Filled with Phase Change Materials</h3>
+      <p>Long-term simulation comparing enthalpy-porosity and simplified models for PCMs in cylindrical brick cavities across full annual climate cycles.</p>
+      <div class="finding">🔬 Key finding: Single-layer PCM bricks reduced maximum temperature by up to 9.5°C; double-layer reduced heat transfer by 60%.</div>
+    </div>
+
+    <div class="research-card" style="animation-delay:0.6s">
+      <div class="journal">ScienceDirect · Review · 2023</div>
+      <h3>Comprehensive Review: PCM Integration in Building Bricks — Methods, Performance, Applications</h3>
+      <p>Covers macro-encapsulation in bricks, wallboards, and storage tanks. Introduces topology optimization for improved heat transfer structures.</p>
+      <div class="finding">🔬 Key finding: Wall bricks account for 25% of building energy consumption — PCM integration is one of the highest-leverage intervention points available.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── FOOTER CTA ── -->
+<div class="footer-cta">
+  <h2>PASSIVE. PERPETUAL.<br><span style="color:var(--accent)">PLANET-FIRST.</span></h2>
+  <p style="margin-top:1rem;">No electricity. No moving parts. Just thermodynamics doing what it does best.</p>
+  <p style="margin-top:2rem; font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--muted);">CHE 201 Project · Spring 2026 · University of Illinois Chicago</p>
+</div>
+
+<script>
+// ── PARTICLES ──
+const container = document.getElementById('particles');
+const colors = ['rgba(255,107,43,', 'rgba(43,212,255,', 'rgba(255,159,43,'];
+for (let i = 0; i < 30; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const size = Math.random() * 4 + 2;
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  p.style.cssText = `
+    width:${size}px; height:${size}px;
+    left:${Math.random()*100}%;
+    top:${Math.random()*100}%;
+    background:${color}0.7);
+    animation-duration:${8 + Math.random()*12}s;
+    animation-delay:${Math.random()*8}s;
+  `;
+  container.appendChild(p);
+}
+
+// ── INTERSECTION OBSERVER ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+
+    // Cycle steps
+    if (entry.target.id === 'cycle') {
+      document.querySelectorAll('.cycle-step').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 180);
+      });
+    }
+
+    // Stats
+    if (entry.target.id === 'stats') {
+      document.querySelectorAll('.stat-card').forEach((el, i) => {
+        setTimeout(() => {
+          el.classList.add('visible');
+          const counter = el.querySelector('.count-up');
+          if (counter) animateCount(counter);
+        }, i * 120);
+      });
+    }
+
+    // Use cards
+    if (entry.target.id === 'usecards') {
+      document.querySelectorAll('.use-card').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 100);
+      });
+    }
+
+    // Research
+    if (entry.target.id === 'research') {
+      document.querySelectorAll('.research-card').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), i * 140);
+      });
+    }
+
+    // Meters
+    if (entry.target.id === 'meters') {
+      setTimeout(() => {
+        document.getElementById('bar1').style.width = '95%';
+        document.getElementById('bar2').style.width = '55%';
+      }, 400);
+    }
+
+    observer.unobserve(entry.target);
+  });
+}, { threshold: 0.2 });
+
+['cycle','stats','usecards','research','meters'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) observer.observe(el);
+});
+
+// ── COUNT UP ──
+function animateCount(el) {
+  const target = parseFloat(el.dataset.target);
+  const duration = 1800;
+  const start = performance.now();
+  function step(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(ease * target);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+</script>
+</body>
+</html>
