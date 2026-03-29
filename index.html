@@ -3,191 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dhruba Chowdhury · ChemE Portfolio</title>
+<title>Dhruba Chowdhury - ChemE Engineer</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@300;400;500;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #03040a; --bg2: #070b14; --surface: #0c1220; --surface2: #101828;
-  --accent: #00d4ff; --accent2: #ff6b2b; --accent3: #00ff88;
-  --text: #e2e8f0; --muted: #8899aa;
-  --border: rgba(0,212,255,0.15);
-}
-html { scroll-behavior: smooth; }
-body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.7; overflow-x: hidden; cursor: none; }
-
-/* CURSOR */
-.cursor { position:fixed; top:0; left:0; width:12px; height:12px; background:var(--accent); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s,background .2s; mix-blend-mode:screen; }
-.cursor-ring { position:fixed; top:0; left:0; width:36px; height:36px; border:1px solid rgba(0,212,255,0.5); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .2s,height .2s; }
-
-/* BG */
-#bg-canvas { position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.5; }
-.scanlines { position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 4px); pointer-events:none; z-index:1; }
-
-/* NAV */
-nav { position:fixed; top:0; left:0; right:0; height:64px; display:flex; justify-content:space-between; align-items:center; padding:0 5%; background:rgba(3,4,10,0.9); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); z-index:100; }
-.nav-logo { font-family:'Orbitron',monospace; font-size:1rem; font-weight:700; color:var(--accent); text-decoration:none; letter-spacing:0.1em; text-shadow:0 0 20px rgba(0,212,255,0.5); }
-.nav-links { display:flex; gap:2rem; list-style:none; }
-.nav-links a { text-decoration:none; color:var(--muted); font-size:0.78rem; font-family:'JetBrains Mono',monospace; letter-spacing:0.1em; text-transform:uppercase; transition:color .2s; position:relative; }
-.nav-links a::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px; background:var(--accent); transform:scaleX(0); transition:transform .3s; }
-.nav-links a:hover { color:var(--accent); }
-.nav-links a:hover::after { transform:scaleX(1); }
-.nav-status { display:flex; align-items:center; gap:6px; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--accent3); letter-spacing:0.1em; }
-.status-dot { width:6px; height:6px; border-radius:50%; background:var(--accent3); animation:blink 2s ease-in-out infinite; box-shadow:0 0 8px var(--accent3); }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-/* HERO */
-#hero { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:120px 8% 80px; position:relative; overflow:hidden; z-index:2; }
-.hero-grid { position:absolute; inset:0; background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px); background-size:80px 80px; mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent); }
-.hero-tag { font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); display:flex; align-items:center; gap:10px; margin-bottom:2rem; animation:fadeUp .8s ease .2s both; }
-.hero-tag::before { content:''; width:40px; height:1px; background:var(--accent); box-shadow:0 0 8px var(--accent); }
-.hero-name { font-family:'Orbitron',monospace; font-size:clamp(2.8rem,7vw,6.5rem); font-weight:900; line-height:1; margin-bottom:0.3rem; animation:fadeUp .8s ease .4s both; }
-.hero-name .l1 { display:block; color:var(--text); }
-.hero-name .l2 { display:block; background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.glitch-text { position:relative; }
-.glitch-text::before { content:attr(data-text); position:absolute; top:0; left:2px; width:100%; -webkit-text-fill-color:transparent; background:inherit; -webkit-background-clip:text; background-clip:text; animation:g1 4s infinite linear; }
-.glitch-text::after { content:attr(data-text); position:absolute; top:0; left:-2px; width:100%; -webkit-text-fill-color:transparent; background:inherit; -webkit-background-clip:text; background-clip:text; animation:g2 3s infinite linear; }
-@keyframes g1 { 0%,90%,100%{clip-path:inset(50% 0 50% 0)} 92%{clip-path:inset(10% 0 60% 0)} 94%{clip-path:inset(80% 0 5% 0)} }
-@keyframes g2 { 0%,85%,100%{clip-path:inset(50% 0 50% 0)} 87%{clip-path:inset(60% 0 10% 0)} 89%{clip-path:inset(5% 0 80% 0)} }
-.hero-title { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:var(--accent2); letter-spacing:0.15em; text-transform:uppercase; margin:1.2rem 0 1.5rem; animation:fadeUp .8s ease .55s both; }
-.hero-sub { font-size:1.05rem; color:var(--muted); max-width:500px; font-weight:300; line-height:1.8; margin-bottom:3rem; animation:fadeUp .8s ease .7s both; }
-.hero-cta { display:flex; gap:1.2rem; flex-wrap:wrap; animation:fadeUp .8s ease .9s both; }
-
-/* BUTTONS */
-.btn-p { display:inline-flex; align-items:center; gap:8px; background:transparent; border:1px solid var(--accent); color:var(--accent); padding:13px 30px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; transition:all .3s; position:relative; overflow:hidden; clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%); }
-.btn-p::before { content:''; position:absolute; inset:0; background:var(--accent); transform:translateX(-100%); transition:transform .3s; z-index:-1; }
-.btn-p:hover { color:var(--bg); }
-.btn-p:hover::before { transform:translateX(0); }
-.btn-s { display:inline-flex; align-items:center; gap:8px; background:transparent; border:1px solid rgba(255,107,43,0.5); color:var(--accent2); padding:13px 30px; font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; transition:all .3s; clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%); }
-.btn-s:hover { background:rgba(255,107,43,0.1); }
-
-/* HERO DECO */
-.hero-deco { position:absolute; right:6%; top:50%; transform:translateY(-50%); width:340px; height:340px; pointer-events:none; animation:fadeIn 1.2s ease 1.2s both; }
-.deco-r { position:absolute; inset:0; border:1px solid rgba(0,212,255,0.2); border-radius:50%; animation:spin 20s linear infinite; }
-.deco-r:nth-child(2) { inset:45px; border-color:rgba(255,107,43,0.15); animation-duration:14s; animation-direction:reverse; }
-.deco-r:nth-child(3) { inset:90px; border-color:rgba(0,255,136,0.1); animation-duration:28s; }
-.deco-r::after { content:''; position:absolute; top:-4px; left:50%; width:8px; height:8px; background:var(--accent); border-radius:50%; box-shadow:0 0 14px var(--accent); transform:translateX(-50%); }
-@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-.deco-c { position:absolute; inset:125px; display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:var(--accent); text-shadow:0 0 30px var(--accent); animation:pulse 3s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.06)} }
-
-/* SECTIONS */
-.sw { position:relative; z-index:2; padding:100px 8%; max-width:1200px; margin:0 auto; }
-.sl { font-family:'JetBrains Mono',monospace; font-size:0.68rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--accent); margin-bottom:0.8rem; display:flex; align-items:center; gap:10px; }
-.sl::before { content:''; width:24px; height:1px; background:var(--accent); }
-.st { font-family:'Orbitron',monospace; font-size:clamp(1.8rem,4vw,3rem); font-weight:700; line-height:1.1; margin-bottom:0.5rem; color:var(--text); }
-.st span { color:var(--accent); }
-.sd { width:60px; height:2px; background:linear-gradient(90deg,var(--accent),transparent); margin:1.5rem 0 3rem; box-shadow:0 0 10px var(--accent); }
-
-/* REVEAL — uses 'both' fill mode so it always ends visible */
-.reveal { opacity:0; transform:translateY(28px); transition:opacity .7s ease,transform .7s ease; }
-.reveal.visible { opacity:1 !important; transform:translateY(0) !important; }
-
-/* ABOUT */
-.about-grid { display:grid; grid-template-columns:1.2fr 1fr; gap:4rem; align-items:start; }
-.about-text p { color:var(--muted); font-weight:300; margin-bottom:1.2rem; font-size:0.95rem; line-height:1.9; }
-.about-stats { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.sc { background:var(--surface); border:1px solid var(--border); padding:1.5rem; position:relative; overflow:hidden; transition:border-color .3s,transform .3s; clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px)); }
-.sc::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,var(--accent),transparent); }
-.sc:hover { border-color:rgba(0,212,255,0.4); transform:translateY(-3px); }
-.sn { font-family:'Orbitron',monospace; font-size:2rem; font-weight:700; color:var(--accent); line-height:1; margin-bottom:0.4rem; text-shadow:0 0 20px rgba(0,212,255,0.4); }
-.sk { font-family:'JetBrains Mono',monospace; font-size:0.65rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; }
-
-/* EXPERIENCE */
-.exp-list { display:flex; flex-direction:column; gap:1.2rem; }
-.ec { background:var(--surface); border:1px solid var(--border); padding:2rem 2rem 2rem 2.5rem; position:relative; transition:border-color .3s,transform .3s,box-shadow .3s; clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%); }
-.ec::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--accent),transparent); }
-.ec:hover { border-color:rgba(0,212,255,0.35); transform:translateX(4px); box-shadow:-4px 0 30px rgba(0,212,255,0.1); }
-.eb { font-family:'JetBrains Mono',monospace; font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent3); border:1px solid rgba(0,255,136,0.3); padding:2px 10px; display:inline-block; margin-bottom:0.6rem; }
-.eh { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem; }
-.er { font-family:'Orbitron',monospace; font-size:1.1rem; font-weight:600; margin-bottom:0.2rem; color:var(--text); }
-.eo { font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--accent); margin-bottom:0.8rem; letter-spacing:0.06em; }
-.ed { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--muted); letter-spacing:0.08em; white-space:nowrap; }
-.edesc { font-size:0.875rem; color:var(--muted); font-weight:300; line-height:1.8; }
-.ebl { margin-top:0.8rem; padding-left:0; list-style:none; }
-.ebl li { font-size:0.85rem; color:var(--muted); font-weight:300; line-height:1.7; margin-bottom:4px; padding-left:1.2rem; position:relative; }
-.ebl li::before { content:'›'; position:absolute; left:0; color:var(--accent); font-size:1rem; }
-
-/* SKILLS */
-.skills-bg { background:var(--bg2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); position:relative; z-index:2; }
-.sg { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.2rem; }
-.sgr { background:var(--surface); border:1px solid var(--border); padding:1.5rem; position:relative; overflow:hidden; transition:border-color .3s,transform .3s; clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%); }
-.sgr::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,var(--accent2),transparent); transform:scaleX(0); transform-origin:left; transition:transform .4s; }
-.sgr:hover { border-color:rgba(0,212,255,0.3); transform:translateY(-3px); }
-.sgr:hover::after { transform:scaleX(1); }
-.sgt { font-family:'JetBrains Mono',monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid var(--border); }
-.si { font-size:0.82rem; color:var(--muted); padding:5px 0; display:flex; align-items:center; gap:8px; transition:color .2s; }
-.si:hover { color:var(--text); }
-.dot { width:4px; height:4px; border-radius:50%; background:var(--accent2); flex-shrink:0; box-shadow:0 0 6px var(--accent2); }
-
-/* PROJECTS */
-.pg { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:1.2rem; }
-.pc { background:var(--surface); border:1px solid var(--border); overflow:hidden; position:relative; transition:transform .3s,border-color .3s,box-shadow .3s; clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); }
-.pc:hover { transform:translateY(-6px); border-color:rgba(0,212,255,0.4); box-shadow:0 20px 60px rgba(0,212,255,0.08); }
-.ph { background:var(--surface2); padding:1.5rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-.pi { font-size:1.8rem; }
-.py { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--accent); letter-spacing:0.1em; }
-.pb { padding:1.5rem; }
-.pt { font-family:'Orbitron',monospace; font-size:0.9rem; font-weight:600; margin-bottom:0.5rem; line-height:1.3; color:var(--text); }
-.pdesc { font-size:0.82rem; color:var(--muted); line-height:1.7; margin-bottom:1rem; font-weight:300; }
-.tags { display:flex; flex-wrap:wrap; gap:6px; }
-.tag { font-family:'JetBrains Mono',monospace; font-size:0.62rem; padding:2px 10px; background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.15); color:var(--accent); letter-spacing:0.06em; }
-
-/* FEATURED PROJECT */
-.pc.feat { grid-column:1/-1; border-color:rgba(0,212,255,0.3); clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px)); }
-.pc.feat .ph { background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(255,107,43,0.05)); padding:2rem; }
-.fb { font-family:'JetBrains Mono',monospace; font-size:0.62rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--accent); border:1px solid rgba(0,212,255,0.4); padding:3px 12px; display:inline-block; margin-bottom:0.5rem; animation:bp 2.5s ease-in-out infinite; }
-@keyframes bp { 0%,100%{border-color:rgba(0,212,255,0.4)} 50%{border-color:rgba(0,212,255,0.9);box-shadow:0 0 12px rgba(0,212,255,0.2)} }
-.ft { font-family:'Orbitron',monospace; font-size:clamp(1.1rem,2.5vw,1.7rem); font-weight:700; line-height:1.2; margin-bottom:0.3rem; color:var(--text); }
-.fsub { font-size:0.82rem; color:var(--muted); font-weight:300; }
-.fbody { padding:2rem; display:grid; grid-template-columns:1fr auto; gap:2rem; align-items:start; }
-.fdesc { font-size:0.875rem; color:var(--muted); line-height:1.8; font-weight:300; margin-bottom:1.2rem; }
-.fhl { display:flex; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.2rem; }
-.hp { font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--accent3); border:1px solid rgba(0,255,136,0.25); background:rgba(0,255,136,0.05); padding:4px 12px; letter-spacing:0.06em; }
-.pl { display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); border:1px solid rgba(0,212,255,0.4); padding:10px 20px; text-decoration:none; transition:all .3s; position:relative; overflow:hidden; clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%); white-space:nowrap; align-self:flex-start; margin-top:0.5rem; }
-.pl::before { content:''; position:absolute; inset:0; background:var(--accent); transform:translateX(-100%); transition:transform .3s; z-index:-1; }
-.pl:hover { color:var(--bg); }
-.pl:hover::before { transform:translateX(0); }
-
-/* CONTACT */
-.cc { background:var(--surface); border:1px solid var(--border); padding:4rem 3rem; text-align:center; position:relative; overflow:hidden; clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,24px 100%,0 calc(100% - 24px)); }
-.cc::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(0,212,255,0.05),transparent 70%); }
-.ct { font-family:'Orbitron',monospace; font-size:clamp(1.8rem,4vw,3rem); font-weight:700; margin-bottom:1rem; position:relative; color:var(--text); }
-.cs { color:var(--muted); font-weight:300; margin-bottom:2.5rem; font-size:0.95rem; position:relative; }
-.cl { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; position:relative; }
-.cla { display:inline-flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:0.75rem; letter-spacing:0.1em; color:var(--text); border:1px solid var(--border); padding:12px 24px; text-decoration:none; transition:all .3s; clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%); }
-.cla:hover { border-color:var(--accent); color:var(--accent); background:rgba(0,212,255,0.06); }
-
-/* FOOTER */
-footer { text-align:center; padding:2rem; font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--muted); letter-spacing:0.1em; border-top:1px solid var(--border); position:relative; z-index:2; }
-
-/* ANIMATIONS */
-@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
-/* RESPONSIVE */
-@media(max-width:768px){
-  .about-grid{grid-template-columns:1fr;gap:2rem;}
-  .hero-deco{display:none;}
-  .fbody{grid-template-columns:1fr;}
-  nav{padding:0 1rem;}
-  .nav-links{gap:1rem;}
-  .sw{padding:80px 6%;}
-  #hero{padding:120px 6% 80px;}
-  .nav-status{display:none;}
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
 <canvas id="bg-canvas"></canvas>
 <div class="scanlines"></div>
 
-<!-- NAV -->
 <nav>
-  <a href="#hero" class="nav-logo">DC_PORTFOLIO</a>
+  <a href="#hero" class="nav-logo">DC_ENGINEER</a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#experience">Experience</a></li>
@@ -195,256 +22,289 @@ footer { text-align:center; padding:2rem; font-family:'JetBrains Mono',monospace
     <li><a href="#projects">Projects</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <div class="nav-status"><div class="status-dot"></div>ONLINE · UIC ChemE</div>
+  <div class="nav-status"><div class="status-dot"></div>ONLINE - UIC ChemE</div>
 </nav>
 
-<!-- HERO -->
-<section id="hero">
+<div class="section-page" id="hero">
   <div class="hero-grid"></div>
-  <div class="hero-tag">Chemical Engineering · University of Illinois Chicago · Class of 2028</div>
-  <h1 class="hero-name">
-    <span class="l1">DHRUBA</span>
-    <span class="l2 glitch-text" data-text="CHOWDHURY">CHOWDHURY</span>
-  </h1>
-  <div class="hero-title">// ChemE Student · Lab Assistant · Educator</div>
-  <p class="hero-sub">Engineering sustainable processes and building real-world solutions — bridging thermodynamics with design thinking at UIC.</p>
-  <div class="hero-cta">
-    <a href="#experience" class="btn-p">View Experience →</a>
-    <a href="#contact" class="btn-s">Get In Touch</a>
-  </div>
-  <div class="hero-deco">
-    <div class="deco-r"></div>
-    <div class="deco-r"></div>
-    <div class="deco-r"></div>
-    <div class="deco-c">⚗</div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<div class="sw" id="about">
-  <p class="sl reveal">Background</p>
-  <h2 class="st reveal">WHO <span>I AM</span></h2>
-  <div class="sd reveal"></div>
-  <div class="about-grid">
-    <div class="about-text reveal">
-      <p>I'm a chemical engineering student at the University of Illinois Chicago (expected graduation April 2028), currently working as a Lab Assistant at UIC. I'm skilled in supporting experimental procedures, maintaining precise records, and ensuring compliance with safety protocols.</p>
-      <p>I'm also passionate about education — I work as a K–12 tutor in Chicago, helping students build academic confidence through one-on-one and small group support.</p>
-      <p>I'm actively seeking internship opportunities in chemical engineering, process design, or related fields where I can grow my technical skills and make a real contribution.</p>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">Chemical Engineering - University of Illinois Chicago - Class of 2028</div>
+      <h1 class="hero-name">
+        <span class="l1">DHRUBA</span>
+        <span class="l2 glitch-text" data-text="CHOWDHURY">CHOWDHURY</span>
+      </h1>
+      <div class="hero-title">ChemE Student - Lab Assistant - Educator</div>
+      <p class="hero-sub">Engineering sustainable processes and building real-world solutions, bridging thermodynamics with design thinking at UIC.</p>
+      <div class="hero-cta">
+        <a href="#experience" class="btn-p">View Experience</a>
+        <a href="#contact" class="btn-s">Get In Touch</a>
+      </div>
     </div>
-    <div class="about-stats reveal">
-      <div class="sc"><div class="sn">UIC</div><div class="sk">University of Illinois Chicago</div></div>
-      <div class="sc"><div class="sn count-up" data-target="2028">2028</div><div class="sk">Expected Graduation</div></div>
-      <div class="sc"><div class="sn count-up" data-target="2">0</div><div class="sk">Active Roles</div></div>
-      <div class="sc"><div class="sn">B.S.</div><div class="sk">Chemical Engineering</div></div>
+    <div class="headshot-wrap">
+      <img src="headshot.jpg" class="headshot-img" alt="Dhruba Chowdhury">
+      <div class="headshot-border"></div>
+      <div class="headshot-corner tl"></div>
+      <div class="headshot-corner tr"></div>
+      <div class="headshot-corner bl"></div>
+      <div class="headshot-corner br"></div>
     </div>
   </div>
 </div>
 
-<!-- EXPERIENCE -->
-<div class="sw" id="experience">
-  <p class="sl reveal">Work History</p>
-  <h2 class="st reveal">EXPERIENCE</h2>
-  <div class="sd reveal"></div>
-  <div class="exp-list">
-    <div class="ec reveal">
-      <span class="eb">● ACTIVE</span>
-      <div class="eh">
-        <div><div class="er">Lab Assistant</div><div class="eo">University of Illinois Chicago</div></div>
-        <div class="ed">JAN 2026 – PRESENT</div>
+<div class="section-divider-line"></div>
+
+<div class="section-page" id="about">
+  <div class="sw">
+    <p class="sl reveal">Background</p>
+    <h2 class="st reveal">WHO <span>I AM</span></h2>
+    <div class="sd reveal"></div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I am a chemical engineering student at the University of Illinois Chicago (expected graduation April 2028), currently working as a Lab Assistant at UIC. I am skilled in supporting experimental procedures, maintaining precise records, and ensuring compliance with safety protocols.</p>
+        <p>I am also passionate about education and work as a K-12 tutor in Chicago, helping students build academic confidence through one-on-one and small group support.</p>
+        <p>I am actively seeking internship opportunities in chemical engineering, process design, or related fields where I can grow my technical skills and make a real contribution.</p>
       </div>
-      <p class="edesc">Supporting daily lab operations, experimental setup, and ensuring a safe, compliant environment. Providing hands-on guidance to students and maintaining accurate records for ongoing research.</p>
-      <ul class="ebl">
-        <li>Supported experimental setup and material preparation for ongoing research activities.</li>
-        <li>Maintained accurate lab records, observations, and organized data for analysis.</li>
-        <li>Enforced safety protocols and ensured full compliance across all lab activities.</li>
-        <li>Assisted and guided students during hands-on experiments in a collaborative environment.</li>
-      </ul>
-    </div>
-    <div class="ec reveal">
-      <span class="eb">● ACTIVE</span>
-      <div class="eh">
-        <div><div class="er">Academic Tutor</div><div class="eo">K–12 Education, Chicago</div></div>
-        <div class="ed">NOV 2025 – PRESENT</div>
+      <div class="about-stats reveal">
+        <div class="sc"><div class="sn">UIC</div><div class="sk">University of Illinois Chicago</div></div>
+        <div class="sc"><div class="sn count-up" data-target="2028">2028</div><div class="sk">Expected Graduation</div></div>
+        <div class="sc"><div class="sn count-up" data-target="2">0</div><div class="sk">Active Roles</div></div>
+        <div class="sc"><div class="sn">B.S.</div><div class="sk">Chemical Engineering</div></div>
       </div>
-      <p class="edesc">Providing academic support to K–12 students in an after-school setting, reinforcing classroom concepts and promoting effective study habits in a supportive learning environment.</p>
-      <ul class="ebl">
-        <li>Delivered one-on-one and small group tutoring tailored to individual learning needs.</li>
-        <li>Assisted students with homework, test preparation, and concept reinforcement across subjects.</li>
-        <li>Encouraged academic confidence, organization, and independent learning skills.</li>
-      </ul>
     </div>
   </div>
 </div>
 
-<!-- SKILLS -->
-<div class="skills-bg">
-  <div class="sw" id="skills">
+<div class="section-divider-line"></div>
+
+<div class="section-page" id="experience">
+  <div class="sw">
+    <p class="sl reveal">Work History</p>
+    <h2 class="st reveal">EXPERIENCE</h2>
+    <div class="sd reveal"></div>
+    <div class="exp-list">
+      <div class="ec reveal">
+        <span class="eb">ACTIVE</span>
+        <div class="eh">
+          <div>
+            <div class="er">Lab Assistant</div>
+            <div class="eo"><a href="https://viveksharmalab.com/" target="_blank" rel="noopener">ODES Lab - Vivek Sharma Lab, UIC</a></div>
+          </div>
+          <div class="ed">JAN 2026 - PRESENT</div>
+        </div>
+        <p class="edesc">Supporting daily lab operations and experimental research at the ODES Lab under Prof. Vivek Sharma, focusing on polymer and soft matter physics. Maintaining accurate records and ensuring compliance with safety protocols.</p>
+        <ul class="ebl">
+          <li>Conducting research in polymer and soft matter physics within a cutting-edge academic lab environment.</li>
+          <li>Applying scaling and dimensional analysis to characterize complex fluid systems.</li>
+          <li>Assisting with rheology and mechanics experiments to study material behavior.</li>
+          <li>Maintaining accurate lab records and organized data for ongoing research analysis.</li>
+          <li>Enforcing safety protocols and ensuring full compliance across all lab activities.</li>
+        </ul>
+        <div class="research-tags">
+          <span class="research-tag">Polymer Physics</span>
+          <span class="research-tag">Soft Matter</span>
+          <span class="research-tag">Rheology</span>
+          <span class="research-tag">Scaling Analysis</span>
+          <span class="research-tag">Dimensional Analysis</span>
+        </div>
+      </div>
+      <div class="ec reveal">
+        <span class="eb">ACTIVE</span>
+        <div class="eh">
+          <div>
+            <div class="er">Academic Tutor</div>
+            <div class="eo">K-12 Education, Chicago</div>
+          </div>
+          <div class="ed">NOV 2025 - PRESENT</div>
+        </div>
+        <p class="edesc">Providing academic support to K-12 students in an after-school setting, reinforcing classroom concepts and promoting effective study habits.</p>
+        <ul class="ebl">
+          <li>Delivered one-on-one and small group tutoring tailored to individual learning needs.</li>
+          <li>Assisted students with homework, test preparation, and concept reinforcement.</li>
+          <li>Encouraged academic confidence, organization, and independent learning skills.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider-line"></div>
+
+<div class="section-page skills-bg" id="skills">
+  <div class="sw">
     <p class="sl reveal">Capabilities</p>
-    <h2 class="st reveal">SKILLS <span>&</span> TOOLS</h2>
+    <h2 class="st reveal">SKILLS <span>&amp;</span> TOOLS</h2>
     <div class="sd reveal"></div>
     <div class="sg">
-      <div class="sgr reveal"><div class="sgt">// Chemistry</div>
-        <div class="si"><span class="dot"></span>Thermodynamics & Energy</div>
-        <div class="si"><span class="dot"></span>Chemical Dynamics & Kinetics</div>
+      <div class="sgr reveal">
+        <div class="sgt">Chemistry</div>
+        <div class="si"><span class="dot"></span>Thermodynamics &amp; Energy</div>
+        <div class="si"><span class="dot"></span>Chemical Dynamics &amp; Kinetics</div>
         <div class="si"><span class="dot"></span>Analytical Chemistry</div>
-        <div class="si"><span class="dot"></span>Organic Structure & Function</div>
-        <div class="si"><span class="dot"></span>Titration & Spectroscopy</div>
-        <div class="si"><span class="dot"></span>Lab Inquiry & Experimentation</div>
+        <div class="si"><span class="dot"></span>Organic Structure &amp; Function</div>
+        <div class="si"><span class="dot"></span>Titration &amp; Spectroscopy</div>
+        <div class="skill-courses">
+          <span class="course-chip">CHEM 112<span class="chip-tooltip">General Chemistry I</span></span>
+          <span class="course-chip">CHEM 114<span class="chip-tooltip">General Chemistry II</span></span>
+          <span class="course-chip">CHEM 222<span class="chip-tooltip">Analytical Chemistry Lab</span></span>
+          <span class="course-chip">CHEM 232<span class="chip-tooltip">Organic Chemistry I</span></span>
+        </div>
       </div>
-      <div class="sgr reveal"><div class="sgt">// Chemical Engineering</div>
-        <div class="si"><span class="dot"></span>Process Thermodynamics (CHE 201)</div>
-        <div class="si"><span class="dot"></span>Computational Methods in ChE</div>
-        <div class="si"><span class="dot"></span>Molecular Systems Engineering</div>
-        <div class="si"><span class="dot"></span>Mass & Energy Balances</div>
-        <div class="si"><span class="dot"></span>Lab Safety & Protocols</div>
-        <div class="si"><span class="dot"></span>Data Recording & Analysis</div>
+      <div class="sgr reveal">
+        <div class="sgt">Chemical Engineering</div>
+        <div class="si"><span class="dot"></span>Process Thermodynamics</div>
+        <div class="si"><span class="dot"></span>Computational Methods</div>
+        <div class="si"><span class="dot"></span>Molecular Systems</div>
+        <div class="si"><span class="dot"></span>Mass &amp; Energy Balances</div>
+        <div class="si"><span class="dot"></span>Lab Safety &amp; Protocols</div>
+        <div class="skill-courses">
+          <span class="course-chip">CHE 201<span class="chip-tooltip">Process Thermodynamics</span></span>
+          <span class="course-chip">CHE 205<span class="chip-tooltip">Computational Methods</span></span>
+          <span class="course-chip">CHE 230<span class="chip-tooltip">Molecular Systems Eng.</span></span>
+        </div>
       </div>
-      <div class="sgr reveal"><div class="sgt">// Mathematics & Physics</div>
-        <div class="si"><span class="dot"></span>Calculus I, II & III</div>
+      <div class="sgr reveal">
+        <div class="sgt">Mathematics &amp; Physics</div>
+        <div class="si"><span class="dot"></span>Calculus I, II &amp; III</div>
         <div class="si"><span class="dot"></span>Differential Equations</div>
         <div class="si"><span class="dot"></span>Mathematical Modeling</div>
-        <div class="si"><span class="dot"></span>General Physics (Mechanics)</div>
-        <div class="si"><span class="dot"></span>Numerical Methods</div>
+        <div class="si"><span class="dot"></span>General Physics</div>
+        <div class="skill-courses">
+          <span class="course-chip">MATH 180<span class="chip-tooltip">Calculus I</span></span>
+          <span class="course-chip">MATH 181<span class="chip-tooltip">Calculus II</span></span>
+          <span class="course-chip">MATH 210<span class="chip-tooltip">Calculus III</span></span>
+          <span class="course-chip">MATH 220<span class="chip-tooltip">Differential Equations</span></span>
+          <span class="course-chip">PHYS 141<span class="chip-tooltip">General Physics I</span></span>
+        </div>
       </div>
-      <div class="sgr reveal"><div class="sgt">// Professional</div>
-        <div class="si"><span class="dot"></span>Technical Writing (ENGL 160/161)</div>
-        <div class="si"><span class="dot"></span>Critical Thinking & Analysis</div>
-        <div class="si"><span class="dot"></span>Communication Skills</div>
+      <div class="sgr reveal">
+        <div class="sgt">Professional</div>
+        <div class="si"><span class="dot"></span>Technical Writing</div>
+        <div class="si"><span class="dot"></span>Critical Thinking</div>
         <div class="si"><span class="dot"></span>Team Collaboration</div>
-        <div class="si"><span class="dot"></span>Student Mentoring & Tutoring</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PROJECTS -->
-<div class="sw" id="projects">
-  <p class="sl reveal">Academic Work</p>
-  <h2 class="st reveal">PROJECTS</h2>
-  <div class="sd reveal"></div>
-  <p class="reveal" style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.75rem;margin-bottom:2rem;letter-spacing:0.06em;">// UIC coursework — updated each semester as projects are completed.</p>
-  <div class="pg">
-
-    <!-- FEATURED -->
-    <div class="pc feat reveal">
-      <div class="ph">
-        <div>
-          <span class="fb">★ FEATURED · CHE 201 · SPRING 2026</span>
-          <div class="ft">Phase-Change Material Smart Bricks</div>
-          <div class="fsub">Sustainable Design — Passive thermal regulation using PCM-embedded building bricks</div>
+        <div class="si"><span class="dot"></span>Student Mentoring</div>
+        <div class="skill-courses">
+          <span class="course-chip">ENGL 160<span class="chip-tooltip">Technical Writing I</span></span>
+          <span class="course-chip">ENGL 161<span class="chip-tooltip">Technical Writing II</span></span>
         </div>
-        <span class="py">2026</span>
       </div>
-      <div class="fbody">
-        <div>
-          <p class="fdesc">Designed a sustainable building brick embedded with phase-change materials (PCMs) to passively regulate indoor temperature — absorbing heat during the day and releasing it at night with zero electricity. Full thermodynamic analysis including mass & energy balances, entropy calculations (ΔS = ΔH/T), Life Cycle Analysis, and economic feasibility — backed by peer-reviewed data showing up to 30% energy reduction and a 9.5°C indoor temperature drop vs. conventional bricks.</p>
-          <div class="fhl">
-            <span class="hp">▸ 30% energy reduction</span>
-            <span class="hp">▸ 9.5°C indoor temp drop</span>
-            <span class="hp">▸ Zero electricity</span>
-            <span class="hp">▸ SolidWorks prototype</span>
-            <span class="hp">▸ LCA evaluated</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider-line"></div>
+
+<div class="section-page" id="projects">
+  <div class="sw">
+    <p class="sl reveal">Academic Work</p>
+    <h2 class="st reveal">PROJECTS</h2>
+    <div class="sd reveal"></div>
+    <p class="reveal" style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.75rem;margin-bottom:2rem;letter-spacing:0.06em;">UIC coursework updated each semester.</p>
+    <div class="pg">
+      <div class="pc feat reveal">
+        <div class="ph">
+          <div>
+            <span class="fb">FEATURED - CHE 201 - SPRING 2026</span>
+            <div class="ft">Phase-Change Material Smart Bricks</div>
+            <div class="fsub">Sustainable Design - Passive thermal regulation using PCM-embedded bricks</div>
           </div>
-          <div class="tags">
-            <span class="tag">Phase-Change Materials</span>
-            <span class="tag">Thermodynamics</span>
-            <span class="tag">Mass & Energy Balance</span>
-            <span class="tag">Life Cycle Analysis</span>
-            <span class="tag">Sustainable Design</span>
-            <span class="tag">CHE 201</span>
+          <span class="py">2026</span>
+        </div>
+        <div class="fbody">
+          <div>
+            <p class="fdesc">Designed a sustainable building brick embedded with PCMs to passively regulate indoor temperature with zero electricity. Full thermodynamic analysis including mass and energy balances, entropy calculations, Life Cycle Analysis, and economic feasibility. Backed by peer-reviewed data showing 30% energy reduction and 9.5 degree indoor temp drop vs conventional bricks.</p>
+            <div class="fhl">
+              <span class="hp">30% energy reduction</span>
+              <span class="hp">9.5C temp drop</span>
+              <span class="hp">Zero electricity</span>
+              <span class="hp">SolidWorks prototype</span>
+            </div>
+            <div class="tags">
+              <span class="tag">Phase-Change Materials</span>
+              <span class="tag">Thermodynamics</span>
+              <span class="tag">Mass and Energy Balance</span>
+              <span class="tag">LCA</span>
+              <span class="tag">CHE 201</span>
+            </div>
+          </div>
+          <a href="https://dhruba-07.github.io/dhrubachowdhury.github.io/pcm_brick_presentation.html" target="_blank" rel="noopener" class="orbit-btn">
+            <div class="orbit-ring orbit-ring-1"><div class="orbit-dot"></div></div>
+            <div class="orbit-ring orbit-ring-2"><div class="orbit-dot orbit-dot-2"></div></div>
+            <div class="orbit-pulse"></div>
+            <div class="orbit-btn-inner">
+              <div class="orbit-btn-text">VIEW<br>PROJECT</div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="pc reveal"><div class="ph"><span class="pi">&#127777;</span><span class="py">2026</span></div><div class="pb"><h3 class="pt">Thermodynamics (CHE 201)</h3><p class="pdesc">Energy balances, enthalpy, entropy, and equations of state.</p><div class="tags"><span class="tag">Thermodynamics</span><span class="tag">Energy Balances</span></div></div></div>
+      <div class="pc reveal"><div class="ph"><span class="pi">&#128187;</span><span class="py">2026</span></div><div class="pb"><h3 class="pt">Computational Methods (CHE 205)</h3><p class="pdesc">Numerical methods, equation solving, data analysis and simulation.</p><div class="tags"><span class="tag">Computational Methods</span><span class="tag">Numerical Analysis</span></div></div></div>
+      <div class="pc reveal"><div class="ph"><span class="pi">&#128300;</span><span class="py">2026</span></div><div class="pb"><h3 class="pt">Analytical Chemistry Lab (CHEM 222)</h3><p class="pdesc">Titration, chromatography, and spectroscopy techniques.</p><div class="tags"><span class="tag">Analytical Chemistry</span><span class="tag">Spectroscopy</span></div></div></div>
+      <div class="pc reveal"><div class="ph"><span class="pi">&#9879;</span><span class="py">2025</span></div><div class="pb"><h3 class="pt">Chemistry Inquiry I and II</h3><p class="pdesc">Two-semester lab sequence covering experimental design and inquiry.</p><div class="tags"><span class="tag">Lab Safety</span><span class="tag">Experimental Design</span></div></div></div>
+      <div class="pc reveal"><div class="ph"><span class="pi">&#128208;</span><span class="py">2025</span></div><div class="pb"><h3 class="pt">Calculus I-III + Diff. Equations</h3><p class="pdesc">Mathematical foundation for modeling chemical processes.</p><div class="tags"><span class="tag">Calculus</span><span class="tag">Diff. Equations</span></div></div></div>
+      <div class="pc reveal"><div class="ph"><span class="pi">&#129516;</span><span class="py">2025</span></div><div class="pb"><h3 class="pt">Molecular Systems (CHE 230)</h3><p class="pdesc">Intermolecular forces, phase behavior, and molecular thermodynamics.</p><div class="tags"><span class="tag">Molecular Engineering</span><span class="tag">Phase Behavior</span></div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider-line"></div>
+
+<div class="section-page" id="contact">
+  <div class="sw">
+    <p class="sl reveal">Connect</p>
+    <h2 class="st reveal">CONTACT</h2>
+    <div class="sd reveal"></div>
+    <div class="contact-bubble-area reveal">
+      <div class="contact-anchor">
+        <div class="contact-anchor-icon">&#9879;</div>
+        <div class="bubble b1"><span class="bubble-dot" style="background:var(--accent)"></span><a href="mailto:dchow6@uic.edu">dchow6@uic.edu</a></div>
+        <div class="bubble b2"><span class="bubble-dot" style="background:var(--accent2)"></span><a href="https://www.linkedin.com/in/dchowdhury007/" target="_blank">LinkedIn</a></div>
+        <div class="bubble b3"><span class="bubble-dot" style="background:var(--accent3)"></span><a href="tel:+13128689101">(312) 868-9101</a></div>
+      </div>
+    </div>
+    <p class="reveal" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:0.5rem;">Hover the icon to reveal contact details</p>
+    <div class="contact-form-wrap reveal">
+      <div class="form-title">Ready to Collaborate?</div>
+      <div class="form-sub">Got a project, opportunity, or just want to connect? Drop a message below.</div>
+      <form id="contactForm" action="https://formspree.io/f/xqegpjkk" method="POST">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input class="form-input" type="text" name="name" placeholder="John Doe" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" type="email" name="email" placeholder="john@example.com" required>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Inquiry</label>
+            <textarea class="form-textarea" name="message" placeholder="Tell me about your project or opportunity..." required></textarea>
           </div>
         </div>
-        <a href="https://dhruba-07.github.io/dhrubachowdhury.github.io/pcm_brick_presentation.html" target="_blank" rel="noopener" class="pl">View Presentation →</a>
-      </div>
-    </div>
-
-    <div class="pc reveal">
-      <div class="ph"><span class="pi">🌡️</span><span class="py">2026</span></div>
-      <div class="pb"><h3 class="pt">Intro to Thermodynamics (CHE 201)</h3><p class="pdesc">Fundamental thermodynamic principles including energy balances, enthalpy, entropy, and equations of state — core foundations of chemical process design.</p><div class="tags"><span class="tag">Thermodynamics</span><span class="tag">Energy Balances</span><span class="tag">CHE 201</span></div></div>
-    </div>
-    <div class="pc reveal">
-      <div class="ph"><span class="pi">💻</span><span class="py">2026</span></div>
-      <div class="pb"><h3 class="pt">Computational Methods in ChE (CHE 205)</h3><p class="pdesc">Applying computational tools and numerical methods to solve chemical engineering problems — equation solving, data analysis, and simulation techniques.</p><div class="tags"><span class="tag">Computational Methods</span><span class="tag">Numerical Analysis</span><span class="tag">CHE 205</span></div></div>
-    </div>
-    <div class="pc reveal">
-      <div class="ph"><span class="pi">🔬</span><span class="py">2026</span></div>
-      <div class="pb"><h3 class="pt">Analytical Chemistry Lab (CHEM 222)</h3><p class="pdesc">Hands-on lab work in analytical techniques including titration, chromatography, and spectroscopy — precision data collection and quantitative analysis.</p><div class="tags"><span class="tag">Analytical Chemistry</span><span class="tag">Spectroscopy</span><span class="tag">Lab Work</span></div></div>
-    </div>
-    <div class="pc reveal">
-      <div class="ph"><span class="pi">⚗️</span><span class="py">2025</span></div>
-      <div class="pb"><h3 class="pt">Foundations of Chemistry Inquiry I & II</h3><p class="pdesc">Two-semester lab sequence covering experimental design, chemical measurements, reaction analysis, and scientific inquiry methods.</p><div class="tags"><span class="tag">Lab Safety</span><span class="tag">Experimental Design</span><span class="tag">CHEM 123/125</span></div></div>
-    </div>
-    <div class="pc reveal">
-      <div class="ph"><span class="pi">📐</span><span class="py">2025</span></div>
-      <div class="pb"><h3 class="pt">Calculus I–III + Differential Equations</h3><p class="pdesc">Full calculus sequence and differential equations — mathematical foundation for modeling chemical processes and transport phenomena.</p><div class="tags"><span class="tag">Calculus</span><span class="tag">Diff. Equations</span><span class="tag">Modeling</span></div></div>
-    </div>
-    <div class="pc reveal">
-      <div class="ph"><span class="pi">🧬</span><span class="py">2025</span></div>
-      <div class="pb"><h3 class="pt">Molecular Systems in ChE (CHE 230)</h3><p class="pdesc">Molecular-level understanding of ChE systems — intermolecular forces, phase behavior, and molecular thermodynamics bridging chemistry and engineering.</p><div class="tags"><span class="tag">Molecular Engineering</span><span class="tag">Phase Behavior</span><span class="tag">CHE 230</span></div></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- CONTACT -->
-<div class="sw" id="contact">
-  <p class="sl reveal">Let's Connect</p>
-  <div class="cc reveal">
-    <div class="ct">OPEN TO <span style="color:var(--accent)">OPPORTUNITIES</span></div>
-    <p class="cs">Seeking internships in chemical engineering, process design, or related industries for Summer 2026 and beyond.</p>
-    <div class="cl">
-      <a href="mailto:dchow6@uic.edu" class="cla">✉ dchow6@uic.edu</a>
-      <a href="tel:+13128689101" class="cla">📞 (312) 868-9101</a>
-      <a href="https://www.linkedin.com/in/dchowdhury007/" target="_blank" class="cla">in LinkedIn</a>
+        <button type="submit" class="form-submit">Send Message</button>
+        <div class="form-success" id="formSuccess">Message sent! I will get back to you soon.</div>
+      </form>
     </div>
   </div>
 </div>
 
-<footer>© 2026 · DHRUBA CHOWDHURY · CHEMICAL ENGINEERING · UNIVERSITY OF ILLINOIS CHICAGO</footer>
+<footer>2026 - DHRUBA CHOWDHURY - CHEMICAL ENGINEERING - UNIVERSITY OF ILLINOIS CHICAGO</footer>
 
-<script>
-// CURSOR — instant snap
-const cur = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-document.addEventListener('mousemove', e => {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top = e.clientY + 'px';
-  ring.style.left = e.clientX + 'px';
-  ring.style.top = e.clientY + 'px';
-});
-document.querySelectorAll('a,button,.pc,.sgr,.sc,.ec').forEach(el => {
-  el.addEventListener('mouseenter', () => { cur.style.width='20px'; cur.style.height='20px'; cur.style.background='var(--accent2)'; ring.style.width='52px'; ring.style.height='52px'; });
-  el.addEventListener('mouseleave', () => { cur.style.width='12px'; cur.style.height='12px'; cur.style.background='var(--accent)'; ring.style.width='36px'; ring.style.height='36px'; });
-});
+<button class="chatbot-toggle" id="chatToggle" title="Chat with AI">&#129302;</button>
+<div class="chatbot-window" id="chatWindow">
+  <div class="chat-header">
+    <div class="chat-title">DC_AI - Ask Me Anything</div>
+    <button class="chat-close" id="chatClose">X</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg bot">Hey! I am Dhruba's AI assistant. Ask me anything about his background, projects, or skills.</div>
+  </div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chatInput" placeholder="Ask me anything..." type="text">
+    <button class="chat-send" id="chatSend">&#10148;</button>
+  </div>
+</div>
 
-// PARTICLES
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let W, H, pts = [];
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize(); window.addEventListener('resize', resize);
-function P() { this.x=Math.random()*W; this.y=Math.random()*H; this.vx=(Math.random()-.5)*.4; this.vy=(Math.random()-.5)*.4; this.r=Math.random()*1.4+.3; this.a=Math.random()*.5+.1; this.c=Math.random()>.6?'0,212,255':Math.random()>.5?'255,107,43':'0,255,136'; }
-for(let i=0;i<100;i++) pts.push(new P());
-(function draw(){
-  ctx.clearRect(0,0,W,H);
-  pts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=W; if(p.x>W)p.x=0; if(p.y<0)p.y=H; if(p.y>H)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fillStyle=`rgba(${p.c},${p.a})`; ctx.fill(); });
-  for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){ const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy); if(d<110){ ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle=`rgba(0,212,255,${.05*(1-d/110)})`; ctx.lineWidth=.5; ctx.stroke(); } }
-  requestAnimationFrame(draw);
-})();
-
-// SCROLL REVEAL
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
-}, { threshold: 0.05 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-// FALLBACK — force all visible after 2s no matter what
-setTimeout(() => { document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible')); }, 2000);
-
-// COUNT UP
-function countUp(el) { const t=parseInt(el.dataset.target),dur=1600,s=performance.now(); (function step(n){ const p=Math.min((n-s)/dur,1),e=1-Math.pow(1-p,3); el.textContent=Math.floor(e*t); if(p<1)requestAnimationFrame(step); else el.textContent=t; })(s); }
-const cobs = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting){ e.target.querySelectorAll('.count-up[data-target]').forEach(countUp); cobs.unobserve(e.target); } }); }, { threshold: 0.3 });
-document.querySelectorAll('.about-stats').forEach(el => cobs.observe(el));
-</script>
+<script src="script.js"></script>
 </body>
 </html>
