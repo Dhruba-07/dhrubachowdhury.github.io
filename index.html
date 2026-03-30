@@ -1,310 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dhruba Chowdhury - ChemE Engineer</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@300;400;500;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A portfolio showcasing projects and skills of Dhruba Chowdhury">
+    <title>Dhruba Chowdhury - Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header>
+        <h1>Dhruba Chowdhury</h1>
+        <nav>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="about">
+            <h2>About Me</h2>
+            <p>Welcome to my portfolio! I'm a developer passionate about building accessible web applications.</p>
+        </section>
+        <section id="projects">
+            <h2>Projects</h2>
+            <h3>Project 1</h3>
+            <p>Details about project 1.</p>
+            <h3>Project 2</h3>
+            <p>Details about project 2.</p>
+        </section>
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>If you'd like to get in touch, feel free to reach out!</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Dhruba Chowdhury</p>
+        <button id="audio-toggle">Toggle Audio</button>
+    </footer>
+    <script>
+        const audioToggle = document.getElementById('audio-toggle');
+        let audioPlaying = false;
 
-<div class="cursor" id="cursor"></div>
-<canvas id="bg-canvas"></canvas>
-<div class="scanlines"></div>
-
-<nav>
-  <a href="#hero" class="nav-logo">DC_ENGINEER</a>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-  <div class="nav-status"><div class="status-dot"></div>ONLINE - UIC ChemE</div>
-</nav>
-
-<div class="section-page" id="hero">
-  <div class="hero-grid"></div>
-  <div class="hero-inner">
-    <div>
-      <div class="hero-tag">Chemical Engineering - University of Illinois Chicago - Class of 2028</div>
-      <h1 class="hero-name">
-        <span class="l1">DHRUBA</span>
-        <span class="l2 glitch-text" data-text="CHOWDHURY">CHOWDHURY</span>
-      </h1>
-      <div class="hero-title">ChemE Student - Lab Assistant - Educator</div>
-      <p class="hero-sub">Engineering sustainable processes and building real-world solutions, bridging thermodynamics with design thinking at UIC.</p>
-      <div class="hero-cta">
-        <a href="#experience" class="btn-p">View Experience</a>
-        <a href="#contact" class="btn-s">Get In Touch</a>
-      </div>
-    </div>
-    <div class="headshot-wrap">
-      <img src="headshot.jpg" class="headshot-img" alt="Dhruba Chowdhury">
-      <div class="headshot-border"></div>
-      <div class="headshot-corner tl"></div>
-      <div class="headshot-corner tr"></div>
-      <div class="headshot-corner bl"></div>
-      <div class="headshot-corner br"></div>
-    </div>
-  </div>
-</div>
-
-<div class="section-divider-line"></div>
-
-<div class="section-page" id="about">
-  <div class="sw">
-    <p class="sl reveal">Background</p>
-    <h2 class="st reveal">WHO <span>I AM</span></h2>
-    <div class="sd reveal"></div>
-    <div class="about-grid">
-      <div class="about-text reveal">
-        <p>I am a chemical engineering student at the University of Illinois Chicago (expected graduation April 2028), currently working as a Lab Assistant at UIC. I am skilled in supporting experimental procedures, maintaining precise records, and ensuring compliance with safety protocols.</p>
-        <p>I am also passionate about education and work as a K-12 tutor in Chicago, helping students build academic confidence through one-on-one and small group support.</p>
-        <p>I am actively seeking internship opportunities in chemical engineering, process design, or related fields where I can grow my technical skills and make a real contribution.</p>
-      </div>
-      <div class="about-stats reveal">
-        <div class="sc"><div class="sn">UIC</div><div class="sk">University of Illinois Chicago</div></div>
-        <div class="sc"><div class="sn count-up" data-target="2028">2028</div><div class="sk">Expected Graduation</div></div>
-        <div class="sc"><div class="sn count-up" data-target="2">0</div><div class="sk">Active Roles</div></div>
-        <div class="sc"><div class="sn">B.S.</div><div class="sk">Chemical Engineering</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="section-divider-line"></div>
-
-<div class="section-page" id="experience">
-  <div class="sw">
-    <p class="sl reveal">Work History</p>
-    <h2 class="st reveal">EXPERIENCE</h2>
-    <div class="sd reveal"></div>
-    <div class="exp-list">
-      <div class="ec reveal">
-        <span class="eb">ACTIVE</span>
-        <div class="eh">
-          <div>
-            <div class="er">Lab Assistant</div>
-            <div class="eo"><a href="https://viveksharmalab.com/" target="_blank" rel="noopener">ODES Lab - Vivek Sharma Lab, UIC</a></div>
-          </div>
-          <div class="ed">JAN 2026 - PRESENT</div>
-        </div>
-        <p class="edesc">Supporting daily lab operations and experimental research at the ODES Lab under Prof. Vivek Sharma, focusing on polymer and soft matter physics. Maintaining accurate records and ensuring compliance with safety protocols.</p>
-        <ul class="ebl">
-          <li>Conducting research in polymer and soft matter physics within a cutting-edge academic lab environment.</li>
-          <li>Applying scaling and dimensional analysis to characterize complex fluid systems.</li>
-          <li>Assisting with rheology and mechanics experiments to study material behavior.</li>
-          <li>Maintaining accurate lab records and organized data for ongoing research analysis.</li>
-          <li>Enforcing safety protocols and ensuring full compliance across all lab activities.</li>
-        </ul>
-        <div class="research-tags">
-          <span class="research-tag">Polymer Physics</span>
-          <span class="research-tag">Soft Matter</span>
-          <span class="research-tag">Rheology</span>
-          <span class="research-tag">Scaling Analysis</span>
-          <span class="research-tag">Dimensional Analysis</span>
-        </div>
-      </div>
-      <div class="ec reveal">
-        <span class="eb">ACTIVE</span>
-        <div class="eh">
-          <div>
-            <div class="er">Academic Tutor</div>
-            <div class="eo">K-12 Education, Chicago</div>
-          </div>
-          <div class="ed">NOV 2025 - PRESENT</div>
-        </div>
-        <p class="edesc">Providing academic support to K-12 students in an after-school setting, reinforcing classroom concepts and promoting effective study habits.</p>
-        <ul class="ebl">
-          <li>Delivered one-on-one and small group tutoring tailored to individual learning needs.</li>
-          <li>Assisted students with homework, test preparation, and concept reinforcement.</li>
-          <li>Encouraged academic confidence, organization, and independent learning skills.</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="section-divider-line"></div>
-
-<div class="section-page skills-bg" id="skills">
-  <div class="sw">
-    <p class="sl reveal">Capabilities</p>
-    <h2 class="st reveal">SKILLS <span>&amp;</span> TOOLS</h2>
-    <div class="sd reveal"></div>
-    <div class="sg">
-      <div class="sgr reveal">
-        <div class="sgt">Chemistry</div>
-        <div class="si"><span class="dot"></span>Thermodynamics &amp; Energy</div>
-        <div class="si"><span class="dot"></span>Chemical Dynamics &amp; Kinetics</div>
-        <div class="si"><span class="dot"></span>Analytical Chemistry</div>
-        <div class="si"><span class="dot"></span>Organic Structure &amp; Function</div>
-        <div class="si"><span class="dot"></span>Titration &amp; Spectroscopy</div>
-        <div class="skill-courses">
-          <span class="course-chip">CHEM 112<span class="chip-tooltip">General Chemistry I</span></span>
-          <span class="course-chip">CHEM 114<span class="chip-tooltip">General Chemistry II</span></span>
-          <span class="course-chip">CHEM 222<span class="chip-tooltip">Analytical Chemistry Lab</span></span>
-          <span class="course-chip">CHEM 232<span class="chip-tooltip">Organic Chemistry I</span></span>
-        </div>
-      </div>
-      <div class="sgr reveal">
-        <div class="sgt">Chemical Engineering</div>
-        <div class="si"><span class="dot"></span>Process Thermodynamics</div>
-        <div class="si"><span class="dot"></span>Computational Methods</div>
-        <div class="si"><span class="dot"></span>Molecular Systems</div>
-        <div class="si"><span class="dot"></span>Mass &amp; Energy Balances</div>
-        <div class="si"><span class="dot"></span>Lab Safety &amp; Protocols</div>
-        <div class="skill-courses">
-          <span class="course-chip">CHE 201<span class="chip-tooltip">Process Thermodynamics</span></span>
-          <span class="course-chip">CHE 205<span class="chip-tooltip">Computational Methods</span></span>
-          <span class="course-chip">CHE 230<span class="chip-tooltip">Molecular Systems Eng.</span></span>
-        </div>
-      </div>
-      <div class="sgr reveal">
-        <div class="sgt">Mathematics &amp; Physics</div>
-        <div class="si"><span class="dot"></span>Calculus I, II &amp; III</div>
-        <div class="si"><span class="dot"></span>Differential Equations</div>
-        <div class="si"><span class="dot"></span>Mathematical Modeling</div>
-        <div class="si"><span class="dot"></span>General Physics</div>
-        <div class="skill-courses">
-          <span class="course-chip">MATH 180<span class="chip-tooltip">Calculus I</span></span>
-          <span class="course-chip">MATH 181<span class="chip-tooltip">Calculus II</span></span>
-          <span class="course-chip">MATH 210<span class="chip-tooltip">Calculus III</span></span>
-          <span class="course-chip">MATH 220<span class="chip-tooltip">Differential Equations</span></span>
-          <span class="course-chip">PHYS 141<span class="chip-tooltip">General Physics I</span></span>
-        </div>
-      </div>
-      <div class="sgr reveal">
-        <div class="sgt">Professional</div>
-        <div class="si"><span class="dot"></span>Technical Writing</div>
-        <div class="si"><span class="dot"></span>Critical Thinking</div>
-        <div class="si"><span class="dot"></span>Team Collaboration</div>
-        <div class="si"><span class="dot"></span>Student Mentoring</div>
-        <div class="skill-courses">
-          <span class="course-chip">ENGL 160<span class="chip-tooltip">Technical Writing I</span></span>
-          <span class="course-chip">ENGL 161<span class="chip-tooltip">Technical Writing II</span></span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="section-divider-line"></div>
-
-<div class="section-page" id="projects">
-  <div class="sw">
-    <p class="sl reveal">Academic Work</p>
-    <h2 class="st reveal">PROJECTS</h2>
-    <div class="sd reveal"></div>
-    <p class="reveal" style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.75rem;margin-bottom:2rem;letter-spacing:0.06em;">UIC coursework updated each semester.</p>
-    <div class="pg">
-      <div class="pc feat reveal">
-        <div class="ph">
-          <div>
-            <span class="fb">FEATURED - CHE 201 - SPRING 2026</span>
-            <div class="ft">Phase-Change Material Smart Bricks</div>
-            <div class="fsub">Sustainable Design - Passive thermal regulation using PCM-embedded bricks</div>
-          </div>
-          <span class="py">2026</span>
-        </div>
-        <div class="fbody">
-          <div>
-            <p class="fdesc">Designed a sustainable building brick embedded with PCMs to passively regulate indoor temperature with zero electricity. Full thermodynamic analysis including mass and energy balances, entropy calculations, Life Cycle Analysis, and economic feasibility. Backed by peer-reviewed data showing 30% energy reduction and 9.5 degree indoor temp drop vs conventional bricks.</p>
-            <div class="fhl">
-              <span class="hp">30% energy reduction</span>
-              <span class="hp">9.5C temp drop</span>
-              <span class="hp">Zero electricity</span>
-              <span class="hp">SolidWorks prototype</span>
-            </div>
-            <div class="tags">
-              <span class="tag">Phase-Change Materials</span>
-              <span class="tag">Thermodynamics</span>
-              <span class="tag">Mass and Energy Balance</span>
-              <span class="tag">LCA</span>
-              <span class="tag">CHE 201</span>
-            </div>
-          </div>
-          <a href="https://dhruba-07.github.io/dhrubachowdhury.github.io/pcm_brick_presentation.html" target="_blank" rel="noopener" class="orbit-btn">
-            <div class="orbit-ring orbit-ring-1"><div class="orbit-dot"></div></div>
-            <div class="orbit-ring orbit-ring-2"><div class="orbit-dot orbit-dot-2"></div></div>
-            <div class="orbit-pulse"></div>
-            <div class="orbit-btn-inner">
-              <div class="orbit-btn-text">VIEW<br>PROJECT</div>
-            </div>
-          </a>
-        </div>
-      </div>
-      <div class="pc reveal"><div class="ph"><span class="pi">&#127777;</span><span class="py">2026</span></div><div class="pb"><h3 class="pt">Thermodynamics (CHE 201)</h3><p class="pdesc">Energy balances, enthalpy, entropy, and equations of state.</p><div class="tags"><span class="tag">Thermodynamics</span><span class="tag">Energy Balances</span></div></div></div>
-      <div class="pc reveal"><div class="ph"><span class="pi">&#128187;</span><span class="py">2026</span></div><div class="pb"><h3 class="pt">Computational Methods (CHE 205)</h3><p class="pdesc">Numerical methods, equation solving, data analysis and simulation.</p><div class="tags"><span class="tag">Computational Methods</span><span class="tag">Numerical Analysis</span></div></div></div>
-      <div class="pc reveal"><div class="ph"><span class="pi">&#128300;</span><span class="py">2026</span></div><div class="pb"><h3 class="pt">Analytical Chemistry Lab (CHEM 222)</h3><p class="pdesc">Titration, chromatography, and spectroscopy techniques.</p><div class="tags"><span class="tag">Analytical Chemistry</span><span class="tag">Spectroscopy</span></div></div></div>
-      <div class="pc reveal"><div class="ph"><span class="pi">&#9879;</span><span class="py">2025</span></div><div class="pb"><h3 class="pt">Chemistry Inquiry I and II</h3><p class="pdesc">Two-semester lab sequence covering experimental design and inquiry.</p><div class="tags"><span class="tag">Lab Safety</span><span class="tag">Experimental Design</span></div></div></div>
-      <div class="pc reveal"><div class="ph"><span class="pi">&#128208;</span><span class="py">2025</span></div><div class="pb"><h3 class="pt">Calculus I-III + Diff. Equations</h3><p class="pdesc">Mathematical foundation for modeling chemical processes.</p><div class="tags"><span class="tag">Calculus</span><span class="tag">Diff. Equations</span></div></div></div>
-      <div class="pc reveal"><div class="ph"><span class="pi">&#129516;</span><span class="py">2025</span></div><div class="pb"><h3 class="pt">Molecular Systems (CHE 230)</h3><p class="pdesc">Intermolecular forces, phase behavior, and molecular thermodynamics.</p><div class="tags"><span class="tag">Molecular Engineering</span><span class="tag">Phase Behavior</span></div></div></div>
-    </div>
-  </div>
-</div>
-
-<div class="section-divider-line"></div>
-
-<div class="section-page" id="contact">
-  <div class="sw">
-    <p class="sl reveal">Connect</p>
-    <h2 class="st reveal">CONTACT</h2>
-    <div class="sd reveal"></div>
-    <div class="contact-bubble-area reveal">
-      <div class="contact-anchor">
-        <div class="contact-anchor-icon">&#9879;</div>
-        <div class="bubble b1"><span class="bubble-dot" style="background:var(--accent)"></span><a href="mailto:dchow6@uic.edu">dchow6@uic.edu</a></div>
-        <div class="bubble b2"><span class="bubble-dot" style="background:var(--accent2)"></span><a href="https://www.linkedin.com/in/dchowdhury007/" target="_blank">LinkedIn</a></div>
-        <div class="bubble b3"><span class="bubble-dot" style="background:var(--accent3)"></span><a href="tel:+13128689101">(312) 868-9101</a></div>
-      </div>
-    </div>
-    <p class="reveal" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:0.5rem;">Hover the icon to reveal contact details</p>
-    <div class="contact-form-wrap reveal">
-      <div class="form-title">Ready to Collaborate?</div>
-      <div class="form-sub">Got a project, opportunity, or just want to connect? Drop a message below.</div>
-      <form id="contactForm" action="https://formspree.io/f/xqegpjkk" method="POST">
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">Your Name</label>
-            <input class="form-input" type="text" name="name" placeholder="John Doe" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email Address</label>
-            <input class="form-input" type="email" name="email" placeholder="john@example.com" required>
-          </div>
-          <div class="form-group full">
-            <label class="form-label">Inquiry</label>
-            <textarea class="form-textarea" name="message" placeholder="Tell me about your project or opportunity..." required></textarea>
-          </div>
-        </div>
-        <button type="submit" class="form-submit">Send Message</button>
-        <div class="form-success" id="formSuccess">Message sent! I will get back to you soon.</div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<footer>2026 - DHRUBA CHOWDHURY - CHEMICAL ENGINEERING - UNIVERSITY OF ILLINOIS CHICAGO</footer>
-
-<button class="chatbot-toggle" id="chatToggle" title="Chat with AI">&#129302;</button>
-<div class="chatbot-window" id="chatWindow">
-  <div class="chat-header">
-    <div class="chat-title">DC_AI - Ask Me Anything</div>
-    <button class="chat-close" id="chatClose">X</button>
-  </div>
-  <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg bot">Hey! I am Dhruba's AI assistant. Ask me anything about his background, projects, or skills.</div>
-  </div>
-  <div class="chat-input-row">
-    <input class="chat-input" id="chatInput" placeholder="Ask me anything..." type="text">
-    <button class="chat-send" id="chatSend">&#10148;</button>
-  </div>
-</div>
-
-<script src="script.js"></script>
+        audioToggle.addEventListener('click', () => {
+            audioPlaying = !audioPlaying;
+            if (audioPlaying) {
+                // Code to play audio
+            } else {
+                // Code to stop audio
+            }
+        });
+    </script>
 </body>
 </html>
