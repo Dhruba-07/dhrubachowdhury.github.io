@@ -2,8 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Dhruba Chowdhury - ChemE Engineer</title>
+<meta name="description" content="Dhruba Chowdhury - Chemical Engineering student at UIC (Class of 2028), Lab Assistant at ODES Lab, and K-12 Tutor. Seeking internships in chemical engineering and process design.">
+<meta name="keywords" content="Dhruba Chowdhury, Chemical Engineering, UIC, University of Illinois Chicago, Lab Assistant, ODES Lab, Polymer Physics, Thermodynamics, Internship">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dhruba Chowdhury - ChemE Engineer">
+<meta property="og:description" content="Chemical Engineering student at UIC, Lab Assistant at ODES Lab, and K-12 Tutor. Building sustainable engineering solutions.">
+<meta property="og:url" content="https://dhruba-07.github.io/dhrubachowdhury.github.io/">
+<meta property="og:image" content="https://dhruba-07.github.io/dhrubachowdhury.github.io/headshot.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dhruba Chowdhury - ChemE Engineer">
+<meta name="twitter:description" content="Chemical Engineering student at UIC, Lab Assistant at ODES Lab, and K-12 Tutor.">
+<meta name="twitter:image" content="https://dhruba-07.github.io/dhrubachowdhury.github.io/headshot.jpg">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@300;400;500;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -13,8 +30,8 @@
 <canvas id="bg-canvas"></canvas>
 <div class="scanlines"></div>
 
-<nav>
-  <a href="#hero" class="nav-logo">DC_ENGINEER</a>
+<nav role="navigation" aria-label="Main navigation">
+  <a href="#hero" class="nav-logo" aria-label="DC_ENGINEER - Go to top">DC_ENGINEER</a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#experience">Experience</a></li>
@@ -22,6 +39,7 @@
     <li><a href="#projects">Projects</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <button class="audio-toggle" id="audioToggle" aria-label="Mute audio" title="Toggle audio">&#128266;</button>
   <div class="nav-status"><div class="status-dot"></div>ONLINE - UIC ChemE</div>
 </nav>
 
@@ -42,7 +60,7 @@
       </div>
     </div>
     <div class="headshot-wrap">
-      <img src="headshot.jpg" class="headshot-img" alt="Dhruba Chowdhury">
+      <img src="headshot.jpg" class="headshot-img" alt="Dhruba Chowdhury, Chemical Engineering student at the University of Illinois Chicago">
       <div class="headshot-border"></div>
       <div class="headshot-corner tl"></div>
       <div class="headshot-corner tr"></div>
@@ -68,7 +86,7 @@
       <div class="about-stats reveal">
         <div class="sc"><div class="sn">UIC</div><div class="sk">University of Illinois Chicago</div></div>
         <div class="sc"><div class="sn count-up" data-target="2028">2028</div><div class="sk">Expected Graduation</div></div>
-        <div class="sc"><div class="sn count-up" data-target="2">0</div><div class="sk">Active Roles</div></div>
+        <div class="sc"><div class="sn count-up" data-target="2">2</div><div class="sk">Active Roles</div></div>
         <div class="sc"><div class="sn">B.S.</div><div class="sk">Chemical Engineering</div></div>
       </div>
     </div>
@@ -88,7 +106,7 @@
         <div class="eh">
           <div>
             <div class="er">Lab Assistant</div>
-            <div class="eo"><a href="https://viveksharmalab.com/" target="_blank" rel="noopener">ODES Lab - Vivek Sharma Lab, UIC</a></div>
+            <div class="eo"><a href="https://viveksharmalab.com/" target="_blank" rel="noopener noreferrer" aria-label="ODES Lab - Vivek Sharma Lab, UIC (opens in new window)">ODES Lab - Vivek Sharma Lab, UIC</a></div>
           </div>
           <div class="ed">JAN 2026 - PRESENT</div>
         </div>
@@ -227,7 +245,7 @@
               <span class="tag">CHE 201</span>
             </div>
           </div>
-          <a href="https://dhruba-07.github.io/dhrubachowdhury.github.io/pcm_brick_presentation.html" target="_blank" rel="noopener" class="orbit-btn">
+          <a href="https://dhruba-07.github.io/dhrubachowdhury.github.io/pcm_brick_presentation.html" target="_blank" rel="noopener noreferrer" aria-label="View Phase-Change Material Smart Bricks project (opens in new window)" class="orbit-btn">
             <div class="orbit-ring orbit-ring-1"><div class="orbit-dot"></div></div>
             <div class="orbit-ring orbit-ring-2"><div class="orbit-dot orbit-dot-2"></div></div>
             <div class="orbit-pulse"></div>
@@ -256,52 +274,54 @@
     <div class="sd reveal"></div>
     <div class="contact-bubble-area reveal">
       <div class="contact-anchor">
-        <div class="contact-anchor-icon">&#9879;</div>
-        <div class="bubble b1"><span class="bubble-dot" style="background:var(--accent)"></span><a href="mailto:dchow6@uic.edu">dchow6@uic.edu</a></div>
-        <div class="bubble b2"><span class="bubble-dot" style="background:var(--accent2)"></span><a href="https://www.linkedin.com/in/dchowdhury007/" target="_blank">LinkedIn</a></div>
-        <div class="bubble b3"><span class="bubble-dot" style="background:var(--accent3)"></span><a href="tel:+13128689101">(312) 868-9101</a></div>
+        <div class="contact-anchor-icon" aria-hidden="true">&#9879;</div>
+        <div class="bubble b1"><span class="bubble-dot" style="background:var(--accent)"></span><a href="mailto:dchow6@uic.edu" aria-label="Email Dhruba at dchow6@uic.edu">dchow6@uic.edu</a></div>
+        <div class="bubble b2"><span class="bubble-dot" style="background:var(--accent2)"></span><a href="https://www.linkedin.com/in/dchowdhury007/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile (opens in new window)">LinkedIn</a></div>
+        <div class="bubble b3"><span class="bubble-dot" style="background:var(--accent3)"></span><a href="tel:+13128689101" aria-label="Call Dhruba at (312) 868-9101">(312) 868-9101</a></div>
+        <div class="bubble b4"><span class="bubble-dot" style="background:var(--accent)"></span><a href="https://github.com/Dhruba-07" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in new window)">GitHub</a></div>
       </div>
     </div>
     <p class="reveal" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:0.5rem;">Hover the icon to reveal contact details</p>
     <div class="contact-form-wrap reveal">
       <div class="form-title">Ready to Collaborate?</div>
       <div class="form-sub">Got a project, opportunity, or just want to connect? Drop a message below.</div>
-      <form id="contactForm" action="https://formspree.io/f/xqegpjkk" method="POST">
+      <!-- novalidate disables browser default validation UI; custom validation is handled via JavaScript fetch submission -->
+      <form id="contactForm" action="https://formspree.io/f/xqegpjkk" method="POST" novalidate>
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Your Name</label>
-            <input class="form-input" type="text" name="name" placeholder="John Doe" required>
+            <label class="form-label" for="contact-name">Your Name</label>
+            <input class="form-input" id="contact-name" type="text" name="name" placeholder="John Doe" required aria-required="true">
           </div>
           <div class="form-group">
-            <label class="form-label">Email Address</label>
-            <input class="form-input" type="email" name="email" placeholder="john@example.com" required>
+            <label class="form-label" for="contact-email">Email Address</label>
+            <input class="form-input" id="contact-email" type="email" name="email" placeholder="john@example.com" required aria-required="true">
           </div>
           <div class="form-group full">
-            <label class="form-label">Inquiry</label>
-            <textarea class="form-textarea" name="message" placeholder="Tell me about your project or opportunity..." required></textarea>
+            <label class="form-label" for="contact-message">Inquiry</label>
+            <textarea class="form-textarea" id="contact-message" name="message" placeholder="Tell me about your project or opportunity..." required aria-required="true"></textarea>
           </div>
         </div>
-        <button type="submit" class="form-submit">Send Message</button>
-        <div class="form-success" id="formSuccess">Message sent! I will get back to you soon.</div>
+        <button type="submit" class="form-submit" aria-label="Submit contact form">Send Message</button>
+        <div class="form-success" id="formSuccess" role="alert" aria-live="assertive">Message sent! I will get back to you soon.</div>
       </form>
     </div>
   </div>
 </div>
 
-<footer>2026 - DHRUBA CHOWDHURY - CHEMICAL ENGINEERING - UNIVERSITY OF ILLINOIS CHICAGO</footer>
+<footer role="contentinfo">2026 - DHRUBA CHOWDHURY - CHEMICAL ENGINEERING - UNIVERSITY OF ILLINOIS CHICAGO</footer>
 
-<button class="chatbot-toggle" id="chatToggle" title="Chat with AI">&#129302;</button>
-<div class="chatbot-window" id="chatWindow">
+<button class="chatbot-toggle" id="chatToggle" aria-label="Open chat assistant" title="Chat with AI">&#129302;</button>
+<div class="chatbot-window" id="chatWindow" role="dialog" aria-label="DC_AI Chat Assistant" aria-modal="true">
   <div class="chat-header">
     <div class="chat-title">DC_AI - Ask Me Anything</div>
-    <button class="chat-close" id="chatClose">X</button>
+    <button class="chat-close" id="chatClose" aria-label="Close chat">X</button>
   </div>
-  <div class="chat-messages" id="chatMessages">
+  <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-label="Chat messages">
     <div class="chat-msg bot">Hey! I am Dhruba's AI assistant. Ask me anything about his background, projects, or skills.</div>
   </div>
   <div class="chat-input-row">
-    <input class="chat-input" id="chatInput" placeholder="Ask me anything..." type="text">
-    <button class="chat-send" id="chatSend">&#10148;</button>
+    <input class="chat-input" id="chatInput" placeholder="Ask me anything..." type="text" aria-label="Chat message input">
+    <button class="chat-send" id="chatSend" aria-label="Send message">&#10148;</button>
   </div>
 </div>
 
