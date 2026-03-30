@@ -1,6 +1,8 @@
 // ── AUDIO ENGINE ── R&B Bassy Modern ──
 var audioCtx = null;
+var audioMuted = false;
 function getCtx() {
+  if (audioMuted) return null;
   if (!audioCtx) {
     var A = window.AudioContext || window.webkitAudioContext;
     if (A) audioCtx = new A();
@@ -214,6 +216,23 @@ window.addEventListener('load', function() {
     try { playPortal(); } catch(e) {}
   }, 600);
 });
+
+// ── AUDIO TOGGLE ──
+var audioToggleBtn = document.getElementById('audioToggle');
+if (audioToggleBtn) {
+  audioToggleBtn.addEventListener('click', function() {
+    audioMuted = !audioMuted;
+    if (audioMuted) {
+      audioToggleBtn.textContent = '\uD83D\uDD07';
+      audioToggleBtn.setAttribute('aria-label', 'Unmute audio');
+      audioToggleBtn.classList.add('muted');
+    } else {
+      audioToggleBtn.textContent = '\uD83D\uDD0A';
+      audioToggleBtn.setAttribute('aria-label', 'Mute audio');
+      audioToggleBtn.classList.remove('muted');
+    }
+  });
+}
 
 // ── CURSOR ──
 var cur = document.getElementById('cursor');
