@@ -327,12 +327,15 @@ setTimeout(function() {
 
 var sectionObserver = new IntersectionObserver(function(entries) {
   entries.forEach(function(e) {
-    if (e.isIntersecting && e.target.id && e.target.id !== lastSection) {
-      lastSection = e.target.id;
-      try { playSectionTick(); } catch(err) {}
+    if (e.isIntersecting) {
+      e.target.classList.add('sect-in');
+      if (e.target.id && e.target.id !== lastSection) {
+        lastSection = e.target.id;
+        try { playSectionTick(); } catch(err) {}
+      }
     }
   });
-}, { threshold: 0.4 });
+}, { threshold: 0.15 });
 document.querySelectorAll('.section-page').forEach(function(el) { sectionObserver.observe(el); });
 
 // ── COUNT UP ──
