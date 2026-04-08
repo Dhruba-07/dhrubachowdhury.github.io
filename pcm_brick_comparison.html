@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCM Smart Bricks — Interactive Comparison</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#111;padding:2rem 1rem}
+.wrap{max-width:900px;margin:0 auto;padding:1.5rem 0}
+.section{margin-bottom:2.5rem}
+.label{font-size:12px;color:#666;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem}
+h2{font-size:18px;font-weight:500;color:#111;margin-bottom:1.2rem}
+h3{font-size:15px;font-weight:500;color:#111;margin-bottom:.5rem}
+
+.tab-row{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:6px 16px;border-radius:8px;border:1px solid #ccc;background:transparent;font-size:13px;color:#555;cursor:pointer;transition:all .15s}
+.tab.active{background:#e6f1fb;color:#185fa5;border-color:transparent}
+.tab:hover:not(.active){background:#f5f5f5}
+
+.panel{display:none}.panel.active{display:block}
+
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.metric{background:#f5f5f5;border-radius:8px;padding:1rem;text-align:center}
+.metric .val{font-size:26px;font-weight:500;line-height:1.1}
+.metric .lbl{font-size:12px;color:#666;margin-top:4px}
+.metric .sub{font-size:11px;color:#999;margin-top:3px}
+
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+.card.accent-teal{border-left:3px solid #1D9E75}
+.card.accent-amber{border-left:3px solid #BA7517}
+
+.bar-row{margin-bottom:14px}
+.bar-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.bar-name{font-size:13px;color:#333}
+.bar-val{font-size:13px;font-weight:500}
+.bar-track{height:10px;background:#f0f0f0;border-radius:6px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+.temp-sim{border:1px solid #e0e0e0;border-radius:12px;padding:1.25rem;margin-top:1rem}
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.slider-row label{font-size:13px;color:#666;min-width:110px}
+.slider-row input{flex:1;accent-color:#1D9E75}
+.slider-row span{font-size:13px;font-weight:500;min-width:40px;text-align:right}
+
+.thermo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:1rem}
+.thermo-box{background:#f5f5f5;border-radius:8px;padding:1rem;text-align:center}
+.thermo-temp{font-size:32px;font-weight:500;line-height:1}
+.thermo-name{font-size:12px;color:#666;margin-top:4px}
+.thermo-feel{font-size:11px;margin-top:6px;font-weight:500}
+
+.timeline{position:relative;padding-left:24px;margin-top:.5rem}
+.timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1.5px;background:#e0e0e0}
+.tl-item{position:relative;margin-bottom:16px}
+.tl-dot{position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid}
+.tl-dot.teal{border-color:#1D9E75;background:#E1F5EE}
+.tl-dot.amber{border-color:#BA7517;background:#FAEEDA}
+.tl-time{font-size:12px;color:#666}
+.tl-text{font-size:13px;color:#333;line-height:1.5}
+
+.life-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:.5rem;margin-bottom:1.5rem}
+.life-card{background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem}
+.life-icon{font-size:22px;margin-bottom:8px}
+.life-title{font-size:13px;font-weight:500;color:#111;margin-bottom:4px}
+.life-desc{font-size:12px;color:#666;line-height:1.5}
+.life-savings{font-size:12px;font-weight:500;margin-top:8px;color:#0F6E56}
+
+.compare-row{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;margin-bottom:10px}
+.compare-cell{background:#f5f5f5;border-radius:8px;padding:.75rem 1rem;font-size:13px;line-height:1.4}
+.compare-label{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#888;text-align:center;padding:0 4px}
+.compare-cell.pcm{background:#E1F5EE;color:#0F6E56}
+.compare-cell.conv{background:#FAEEDA;color:#854F0B}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.endurance-bar-wrap{margin-bottom:1.2rem}
+.endurance-header{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px}
+.dual-bar{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.dual-track{height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden}
+.dual-fill-teal{height:100%;background:#1D9E75;border-radius:6px;transition:width 1.1s}
+.dual-fill-amber{height:100%;background:#BA7517;border-radius:6px;transition:width 1.1s}
+.dual-labels{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:3px}
+.dual-label{font-size:11px;color:#888}
+
+.cost-scenario{margin-bottom:1rem;padding:.75rem 1rem;border:1px solid #e0e0e0;border-radius:8px;cursor:pointer;transition:background .15s}
+.cost-scenario:hover{background:#f9f9f9}
+.cost-scenario.selected{border-color:#1D9E75;background:#E1F5EE}
+.cs-row{display:flex;justify-content:space-between;align-items:center}
+.cs-name{font-size:13px;font-weight:500;color:#111}
+.cs-tag{font-size:11px;color:#888}
+.cs-detail{margin-top:.5rem;font-size:12px;color:#555;display:none}
+.cost-scenario.selected .cs-detail{display:block}
+
+@media(max-width:600px){
+  .grid2{grid-template-columns:1fr}
+  .compare-row{grid-template-columns:1fr;gap:4px}
+  .compare-label{text-align:left;font-size:10px;padding:.2rem 0}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="label">CHE 201 &middot; Spring 2026 &middot; University of Illinois Chicago</div>
+<h2 style="font-size:22px;margin-bottom:.4rem">PCM Smart Bricks vs. Conventional Bricks</h2>
+<p style="font-size:13px;color:#666;margin-bottom:1.5rem">Interactive comparison &mdash; capability, endurance, cost, and human impact. All figures from peer-reviewed sources.</p>
+
+<div class="tab-row">
+  <button class="tab active" onclick="switchTab('thermal')">Thermal Performance</button>
+  <button class="tab" onclick="switchTab('endurance')">Endurance</button>
+  <button class="tab" onclick="switchTab('cost')">Cost Analysis</button>
+  <button class="tab" onclick="switchTab('impact')">Human Impact</button>
+  <button class="tab" onclick="switchTab('compare')">Side-by-Side</button>
+</div>
+
+<!-- THERMAL -->
+<div class="panel active" id="panel-thermal">
+  <div class="grid4">
+    <div class="metric"><div class="val" style="color:#1D9E75">&minus;9.5&deg;C</div><div class="lbl">Peak temp reduction</div><div class="sub">vs. standard brick</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">30%</div><div class="lbl">Energy savings</div><div class="sub">heating &amp; cooling</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">60%</div><div class="lbl">Heat transfer drop</div><div class="sub">double-layer PCM</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">79%</div><div class="lbl">Heat capacity boost</div><div class="sub">at 20% PCM by wt</div></div>
+  </div>
+
+  <div class="temp-sim">
+    <h3>Live indoor temperature simulator</h3>
+    <p style="font-size:12px;color:#888;margin-bottom:1rem">Adjust outdoor peak temperature and PCM layer count to see estimated indoor temperatures.</p>
+    <div class="slider-row">
+      <label>Outdoor peak temp</label>
+      <input type="range" min="28" max="50" value="40" step="1" id="sl-outdoor" oninput="updateSim()">
+      <span id="out-outdoor">40&deg;C</span>
+    </div>
+    <div class="slider-row">
+      <label>PCM layer count</label>
+      <input type="range" min="1" max="2" value="1" step="1" id="sl-layers" oninput="updateSim()">
+      <span id="out-layers">1</span>
+    </div>
+    <div class="thermo-grid">
+      <div class="thermo-box">
+        <div class="thermo-temp" id="sim-conv" style="color:#BA7517">38&deg;C</div>
+        <div class="thermo-name">Conventional brick</div>
+        <div class="thermo-feel" id="feel-conv" style="color:#BA7517">Dangerously hot</div>
+      </div>
+      <div class="thermo-box">
+        <div class="thermo-temp" id="sim-pcm" style="color:#1D9E75">28&deg;C</div>
+        <div class="thermo-name">PCM brick</div>
+        <div class="thermo-feel" id="feel-pcm" style="color:#1D9E75">Comfortable</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#aaa;margin-top:.75rem">Based on: single-layer &minus;9.5&deg;C reduction (Faraj et al., 2022); double-layer 60% heat transfer drop.</p>
+  </div>
+
+  <div style="margin-top:1.5rem">
+    <h3 style="margin-bottom:1rem">24-hour heat cycle</h3>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot amber"></div><div class="tl-time">Morning &middot; 6am&ndash;10am</div><div class="tl-text">Outside temp rises above PCM melt threshold (23&ndash;27&deg;C). PCM begins absorbing heat &mdash; indoor temp stays level while walls &ldquo;charge.&rdquo;</div></div>
+      <div class="tl-item"><div class="tl-dot amber"></div><div class="tl-time">Peak heat &middot; 10am&ndash;4pm</div><div class="tl-text">PCM fully melting. Q&nbsp;=&nbsp;m&nbsp;&times;&nbsp;L absorbed silently. Conventional brick transmits full 38&deg;C+ indoors. PCM brick holds indoor at &asymp;28&deg;C.</div></div>
+      <div class="tl-item"><div class="tl-dot teal"></div><div class="tl-time">Cooling &middot; 4pm&ndash;10pm</div><div class="tl-text">Outdoor temp drops. PCM holds latent heat &mdash; room stays warmer than outside without heating systems.</div></div>
+      <div class="tl-item"><div class="tl-dot teal"></div><div class="tl-time">Night &middot; 10pm&ndash;6am</div><div class="tl-text">PCM solidifies, releasing &Delta;H<sub>fusion</sub> back into the room. &Delta;S&nbsp;=&nbsp;&Delta;H&nbsp;/&nbsp;T<sub>melt</sub>. Fully reset for the next cycle.</div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:1.5rem" class="card">
+    <h3 style="margin-bottom:1rem">Thermal performance bars</h3>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Indoor peak temp &mdash; conventional brick</span><span class="bar-val" style="color:#BA7517">38&deg;C</span></div><div class="bar-track"><div class="bar-fill" id="bconv" style="width:0;background:#BA7517"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Indoor peak temp &mdash; PCM brick (single layer)</span><span class="bar-val" style="color:#1D9E75">28.5&deg;C</span></div><div class="bar-track"><div class="bar-fill" id="bpcm1" style="width:0;background:#1D9E75"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Heat transfer &mdash; conventional brick</span><span class="bar-val" style="color:#BA7517">100%</span></div><div class="bar-track"><div class="bar-fill" id="bht_conv" style="width:0;background:#BA7517"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Heat transfer &mdash; double-layer PCM brick</span><span class="bar-val" style="color:#1D9E75">40%</span></div><div class="bar-track"><div class="bar-fill" id="bht_pcm" style="width:0;background:#1D9E75"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Heat capacity &mdash; standard brick (baseline)</span><span class="bar-val" style="color:#888">100%</span></div><div class="bar-track"><div class="bar-fill" id="bhc_conv" style="width:0;background:#888"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Heat capacity &mdash; PCM brick at 20% PCM content</span><span class="bar-val" style="color:#1D9E75">179%</span></div><div class="bar-track"><div class="bar-fill" id="bhc_pcm" style="width:0;background:#1D9E75"></div></div></div>
+  </div>
+</div>
+
+<!-- ENDURANCE -->
+<div class="panel" id="panel-endurance">
+  <div class="grid4">
+    <div class="metric"><div class="val" style="color:#1D9E75">1000+</div><div class="lbl">Melt cycles</div><div class="sub">without degradation</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">15.5&times;</div><div class="lbl">Latent heat gain</div><div class="sub">vs. earth brick</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">0</div><div class="lbl">Moving parts</div><div class="sub">purely passive</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">50+ yrs</div><div class="lbl">Expected lifespan</div><div class="sub">in wall application</div></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:1rem">Structural &amp; durability comparison</h3>
+    <div class="endurance-bar-wrap">
+      <div class="endurance-header"><span>Compressive strength</span></div>
+      <div class="dual-bar"><div class="dual-track"><div class="dual-fill-teal" id="dur1a" style="width:0"></div></div><div class="dual-track"><div class="dual-fill-amber" id="dur1b" style="width:0"></div></div></div>
+      <div class="dual-labels"><span class="dual-label">PCM brick &mdash; 85&ndash;95% of standard</span><span class="dual-label">Conventional &mdash; 100% baseline</span></div>
+    </div>
+    <div class="endurance-bar-wrap">
+      <div class="endurance-header"><span>Thermal cycling stability (1000 cycles)</span></div>
+      <div class="dual-bar"><div class="dual-track"><div class="dual-fill-teal" id="dur2a" style="width:0"></div></div><div class="dual-track"><div class="dual-fill-amber" id="dur2b" style="width:0"></div></div></div>
+      <div class="dual-labels"><span class="dual-label">PCM brick &mdash; &lt;2% thermal property loss</span><span class="dual-label">Conventional &mdash; no PCM to degrade</span></div>
+    </div>
+    <div class="endurance-bar-wrap">
+      <div class="endurance-header"><span>Latent heat retention after 5 cycles</span></div>
+      <div class="dual-bar"><div class="dual-track"><div class="dual-fill-teal" id="dur3a" style="width:0"></div></div><div class="dual-track"><div class="dual-fill-amber" id="dur3b" style="width:0"></div></div></div>
+      <div class="dual-labels"><span class="dual-label">Micro-encapsulated PCM &mdash; 98%+</span><span class="dual-label">Conventional &mdash; N/A</span></div>
+    </div>
+    <div class="endurance-bar-wrap">
+      <div class="endurance-header"><span>Annual energy performance retention</span></div>
+      <div class="dual-bar"><div class="dual-track"><div class="dual-fill-teal" id="dur4a" style="width:0"></div></div><div class="dual-track"><div class="dual-fill-amber" id="dur4b" style="width:0"></div></div></div>
+      <div class="dual-labels"><span class="dual-label">PCM brick &mdash; &lt;1% annual degradation</span><span class="dual-label">Conventional &mdash; flat baseline</span></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card accent-teal">
+      <h3>Why PCM bricks last</h3>
+      <ul style="list-style:none;margin-top:.5rem">
+        <li style="font-size:13px;color:#555;padding:5px 0;border-bottom:1px solid #eee">Micro-encapsulation seals PCM in polymer shell &mdash; no leakage over cycles</li>
+        <li style="font-size:13px;color:#555;padding:5px 0;border-bottom:1px solid #eee">No moving parts or mechanical wear &mdash; purely thermodynamic operation</li>
+        <li style="font-size:13px;color:#555;padding:5px 0;border-bottom:1px solid #eee">Phase transitions are reversible by nature &mdash; tested 1000+ cycles</li>
+        <li style="font-size:13px;color:#555;padding:5px 0">Structural integrity maintained at 20% PCM content by weight</li>
+      </ul>
+    </div>
+    <div class="card accent-amber">
+      <h3>Conventional brick limitations</h3>
+      <ul style="list-style:none;margin-top:.5rem">
+        <li style="font-size:13px;color:#555;padding:5px 0;border-bottom:1px solid #eee">Only sensible heat storage &mdash; 5&ndash;14&times; lower energy density</li>
+        <li style="font-size:13px;color:#555;padding:5px 0;border-bottom:1px solid #eee">Full heat transmission &mdash; no thermal buffering capability</li>
+        <li style="font-size:13px;color:#555;padding:5px 0;border-bottom:1px solid #eee">No mechanism to shift or delay heat load</li>
+        <li style="font-size:13px;color:#555;padding:5px 0">Requires HVAC to compensate for poor thermal performance</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- COST -->
+<div class="panel" id="panel-cost">
+  <div class="grid4">
+    <div class="metric"><div class="val" style="color:#1D9E75">3&ndash;7 yr</div><div class="lbl">Payback period</div><div class="sub">energy savings vs. upfront</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">30%</div><div class="lbl">Annual HVAC savings</div><div class="sub">operational cost cut</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">$0</div><div class="lbl">Maintenance cost</div><div class="sub">no parts to replace</div></div>
+    <div class="metric"><div class="val" style="color:#1D9E75">20 yr+</div><div class="lbl">Savings horizon</div><div class="sub">after breakeven</div></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-bottom:1rem">Cost breakdown &mdash; upfront vs. lifetime</h3>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Material cost &mdash; conventional brick (baseline)</span><span class="bar-val">1.0&times;</span></div><div class="bar-track"><div class="bar-fill" id="cost1" style="width:0;background:#888"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Material cost &mdash; PCM brick (upfront premium)</span><span class="bar-val" style="color:#BA7517">1.4&ndash;1.8&times;</span></div><div class="bar-track"><div class="bar-fill" id="cost2" style="width:0;background:#BA7517"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">10-year HVAC cost &mdash; conventional building</span><span class="bar-val" style="color:#BA7517">100%</span></div><div class="bar-track"><div class="bar-fill" id="cost3" style="width:0;background:#BA7517"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">10-year HVAC cost &mdash; PCM building</span><span class="bar-val" style="color:#1D9E75">70%</span></div><div class="bar-track"><div class="bar-fill" id="cost4" style="width:0;background:#1D9E75"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">20-year total cost &mdash; conventional</span><span class="bar-val" style="color:#BA7517">100%</span></div><div class="bar-track"><div class="bar-fill" id="cost5" style="width:0;background:#BA7517"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">20-year total cost &mdash; PCM (net savings)</span><span class="bar-val" style="color:#1D9E75">~68%</span></div><div class="bar-track"><div class="bar-fill" id="cost6" style="width:0;background:#1D9E75"></div></div></div>
+  </div>
+
+  <h3 style="margin-bottom:.75rem">Select a building scenario</h3>
+  <div class="cost-scenario selected" id="cs0" onclick="selectScenario(0)">
+    <div class="cs-row"><span class="cs-name">Affordable housing unit (60 m&sup2;)</span><span class="cs-tag">Hot/arid climate</span></div>
+    <div class="cs-detail">PCM wall premium: ~$800&ndash;1,200 extra upfront. Annual AC savings: $180&ndash;320/yr. Payback: 3&ndash;5 years. Over 20 years, net saving of $2,800&ndash;4,800.</div>
+  </div>
+  <div class="cost-scenario" id="cs1" onclick="selectScenario(1)">
+    <div class="cs-row"><span class="cs-name">Primary school (800 m&sup2;)</span><span class="cs-tag">Sub-Saharan Africa / South Asia</span></div>
+    <div class="cs-detail">PCM wall premium: ~$12,000&ndash;18,000 extra. Annual HVAC savings: $3,200&ndash;5,500/yr. Payback: 3&ndash;5 years. Frees budget for teachers and textbooks after breakeven.</div>
+  </div>
+  <div class="cost-scenario" id="cs2" onclick="selectScenario(2)">
+    <div class="cs-row"><span class="cs-name">Commercial office (2,500 m&sup2;)</span><span class="cs-tag">Mediterranean / Middle East</span></div>
+    <div class="cs-detail">PCM wall premium: ~$40,000&ndash;60,000. Annual HVAC savings: $14,000&ndash;22,000/yr. Payback: ~3&ndash;4 years. 20-year net saving exceeds $200,000. LEED credit eligible.</div>
+  </div>
+  <div class="cost-scenario" id="cs3" onclick="selectScenario(3)">
+    <div class="cs-row"><span class="cs-name">Retrofit panel installation</span><span class="cs-tag">Existing buildings &mdash; no demolition</span></div>
+    <div class="cs-detail">Interior PCM board panels: $20&ndash;40/m&sup2;. Labour only &mdash; no structural changes. Shorter payback (~5&ndash;7 yr) for older inefficient buildings. Stackable with insulation upgrades.</div>
+  </div>
+</div>
+
+<!-- IMPACT -->
+<div class="panel" id="panel-impact">
+  <p style="font-size:13px;color:#666;margin-bottom:1.25rem">Buildings consume ~40% of global final energy. Walls alone account for 25% of building losses. PCM bricks are one of the highest-leverage intervention points available.</p>
+  <div class="life-cards">
+    <div class="life-card"><div class="life-icon">🏜️</div><div class="life-title">Families in hot climates</div><div class="life-desc">Arizona, Middle East, India, North Africa &mdash; huge day-night swings. PCM makes every cycle count. AC costs cut dramatically.</div><div class="life-savings">Up to 30% lower energy bills</div></div>
+    <div class="life-card"><div class="life-icon">🏘️</div><div class="life-title">Affordable housing</div><div class="life-desc">In regions where AC is unaffordable, passive cooling saves lives during heat events &mdash; not just money. No electricity required.</div><div class="life-savings">Passive cooling with zero running cost</div></div>
+    <div class="life-card"><div class="life-icon">🏫</div><div class="life-title">Schools &amp; clinics</div><div class="life-desc">Public buildings with large occupant loads benefit most &mdash; lower HVAC bills free budget for education and healthcare.</div><div class="life-savings">Budget redirect to education/health</div></div>
+    <div class="life-card"><div class="life-icon">⚡</div><div class="life-title">Grid load shifting</div><div class="life-desc">Absorbing daytime heat reduces peak electricity demand &mdash; directly relieving strain on the power grid at crunch hours.</div><div class="life-savings">Reduces grid peak demand</div></div>
+    <div class="life-card"><div class="life-icon">🌍</div><div class="life-title">CO&sub2; reduction</div><div class="life-desc">RT37 PCM in a single brick cuts 0.112 kg CO&sub2;/day. At scale, millions of bricks remove hundreds of tonnes annually.</div><div class="life-savings">0.112 kg CO&sub2;/day avoided per brick</div></div>
+    <div class="life-card"><div class="life-icon">🔄</div><div class="life-title">Retrofits &mdash; no demolition</div><div class="life-desc">PCM panels and boards added to interior walls of existing buildings. Millions of homes upgraded without reconstruction.</div><div class="life-savings">Scalable to existing building stock</div></div>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:1rem">Environmental impact comparison</h3>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">CO&sub2;/day &mdash; conventional building (full HVAC load)</span><span class="bar-val" style="color:#BA7517">~0.28 kg/day</span></div><div class="bar-track"><div class="bar-fill" id="env1" style="width:0;background:#BA7517"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">CO&sub2; avoided &mdash; RT37 PCM per brick per day</span><span class="bar-val" style="color:#1D9E75">0.112 kg avoided</span></div><div class="bar-track"><div class="bar-fill" id="env2" style="width:0;background:#1D9E75"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Energy share of buildings (global final energy)</span><span class="bar-val" style="color:#BA7517">40%</span></div><div class="bar-track"><div class="bar-fill" id="env3" style="width:0;background:#BA7517"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">Wall heat loss share of building energy</span><span class="bar-val" style="color:#BA7517">25%</span></div><div class="bar-track"><div class="bar-fill" id="env4" style="width:0;background:#BA7517"></div></div></div>
+    <div class="bar-row"><div class="bar-meta"><span class="bar-name">PCM brick potential reduction in wall energy losses</span><span class="bar-val" style="color:#1D9E75">up to 60%</span></div><div class="bar-track"><div class="bar-fill" id="env5" style="width:0;background:#1D9E75"></div></div></div>
+  </div>
+</div>
+
+<!-- SIDE BY SIDE -->
+<div class="panel" id="panel-compare">
+  <div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:0;margin-bottom:8px">
+    <div style="font-size:13px;font-weight:500;color:#0F6E56;text-align:center;padding:.5rem;background:#E1F5EE;border-radius:8px">PCM Smart Brick</div>
+    <div></div>
+    <div style="font-size:13px;font-weight:500;color:#854F0B;text-align:center;padding:.5rem;background:#FAEEDA;border-radius:8px">Conventional Brick</div>
+  </div>
+  <div class="compare-row"><div class="compare-cell pcm">Absorbs &amp; releases heat via phase change (Q&nbsp;=&nbsp;m&nbsp;&times;&nbsp;L)</div><div class="compare-label">Thermal mechanism</div><div class="compare-cell conv">Sensible heat only &mdash; conducts heat directly</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">28&deg;C indoor peak (&minus;9.5&deg;C vs. standard)</div><div class="compare-label">Indoor peak temp</div><div class="compare-cell conv">38&deg;C+ &mdash; full outdoor heat transmitted</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">40% heat transfer (double-layer; &minus;60%)</div><div class="compare-label">Heat transfer rate</div><div class="compare-cell conv">100% &mdash; no thermal buffer</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">179% of standard (at 20% PCM content by weight)</div><div class="compare-label">Heat capacity</div><div class="compare-cell conv">Baseline 100%</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">15.5&times; higher latent heat vs. compressed earth brick</div><div class="compare-label">Latent heat storage</div><div class="compare-cell conv">None &mdash; no phase change mechanism</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">1.4&ndash;1.8&times; upfront; pays back in 3&ndash;7 yr</div><div class="compare-label">Material cost</div><div class="compare-cell conv">Baseline cost; no energy savings offset</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">$0 &mdash; no moving parts, no energy input needed</div><div class="compare-label">Maintenance cost</div><div class="compare-cell conv">HVAC maintenance, filter replacements</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">~30% less HVAC energy per year</div><div class="compare-label">Annual energy use</div><div class="compare-cell conv">Full HVAC load required year-round</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">0.112 kg CO&sub2;/day avoided per brick (RT37)</div><div class="compare-label">CO&sub2; per day</div><div class="compare-cell conv">Indirectly contributes via full HVAC use</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">1000+ thermal cycles; &lt;2% property loss</div><div class="compare-label">Durability</div><div class="compare-cell conv">Structural only &mdash; no thermal cycling concern</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">Works passively &mdash; off-grid, no electricity needed</div><div class="compare-label">Grid dependency</div><div class="compare-cell conv">Requires powered HVAC for comfort</div></div>
+  <div class="compare-row"><div class="compare-cell pcm">85&ndash;95% of conventional compressive strength</div><div class="compare-label">Structural strength</div><div class="compare-cell conv">Full baseline compressive strength</div></div>
+  <p style="font-size:11px;color:#aaa;margin-top:1rem">Sources: Faraj et al. (2022) Energy &amp; Buildings; Al-Yasiri &amp; Szab&oacute; (2025) Energy Storage; Melo et al. (2025) MDPI Materials; comprehensive review ScienceDirect 2023.</p>
+</div>
+
+</div>
+
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const tabs=['thermal','endurance','cost','impact','compare'];
+  document.querySelectorAll('.tab')[tabs.indexOf(id)].classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  setTimeout(()=>animateBars(id),80);
+}
+
+function animateBar(id,pct,delay){
+  setTimeout(()=>{const el=document.getElementById(id);if(el)el.style.width=pct+'%';},delay||0);
+}
+
+function animateBars(id){
+  if(id==='thermal'){animateBar('bconv',76,0);animateBar('bpcm1',57,100);animateBar('bht_conv',100,200);animateBar('bht_pcm',40,300);animateBar('bhc_conv',56,400);animateBar('bhc_pcm',100,500);}
+  if(id==='endurance'){animateBar('dur1a',90,0);animateBar('dur1b',100,100);animateBar('dur2a',98,200);animateBar('dur2b',100,300);animateBar('dur3a',98,400);animateBar('dur3b',10,500);animateBar('dur4a',99,600);animateBar('dur4b',100,700);}
+  if(id==='cost'){animateBar('cost1',56,0);animateBar('cost2',92,100);animateBar('cost3',100,200);animateBar('cost4',70,300);animateBar('cost5',100,400);animateBar('cost6',68,500);}
+  if(id==='impact'){animateBar('env1',100,0);animateBar('env2',40,100);animateBar('env3',100,200);animateBar('env4',62,300);animateBar('env5',60,400);}
+}
+
+function updateSim(){
+  const outdoor=parseInt(document.getElementById('sl-outdoor').value);
+  const layers=parseInt(document.getElementById('sl-layers').value);
+  document.getElementById('out-outdoor').textContent=outdoor+'\u00B0C';
+  document.getElementById('out-layers').textContent=layers;
+  const conv=Math.round(outdoor*0.92+1);
+  const reduction=layers===1?9.5:14.2;
+  const pcm=Math.max(22,Math.round(conv-reduction));
+  document.getElementById('sim-conv').textContent=conv+'\u00B0C';
+  document.getElementById('sim-pcm').textContent=pcm+'\u00B0C';
+  const feelConv=conv>=40?'Dangerously hot':conv>=35?'Very uncomfortable':conv>=30?'Uncomfortable':'Warm';
+  const feelPCM=pcm<=24?'Comfortable':pcm<=27?'Acceptable':'Warm but tolerable';
+  document.getElementById('feel-conv').textContent=feelConv;
+  document.getElementById('feel-pcm').textContent=feelPCM;
+}
+
+function selectScenario(n){
+  for(let i=0;i<4;i++){document.getElementById('cs'+i).classList.toggle('selected',i===n);}
+}
+
+setTimeout(()=>animateBars('thermal'),300);
+</script>
+</body>
+</html>
