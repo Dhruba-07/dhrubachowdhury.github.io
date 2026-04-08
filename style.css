@@ -5,8 +5,7 @@
   --text:#e2e8f0;--muted:#8899aa;--border:rgba(0,212,255,0.15);
 }
 html{scroll-behavior:smooth;scroll-snap-type:y mandatory;}
-body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.7;overflow-x:hidden;cursor:none;}
-.cursor{position:fixed;top:0;left:0;width:14px;height:14px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .15s,height .15s,background .15s;mix-blend-mode:screen;box-shadow:0 0 10px var(--accent);}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.7;overflow-x:hidden;}
 #bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.5;}
 .scanlines{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 4px);pointer-events:none;z-index:1;}
 .section-page{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2;padding:80px 8%;scroll-snap-align:start;}

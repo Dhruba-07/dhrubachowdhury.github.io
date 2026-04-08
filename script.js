@@ -234,35 +234,10 @@ if (audioToggleBtn) {
   });
 }
 
-// ── CURSOR ──
-var cur = document.getElementById('cursor');
-document.addEventListener('mousemove', function(e) {
-  cur.style.left = e.clientX + 'px';
-  cur.style.top = e.clientY + 'px';
-});
-
 // Card/button hover - droplet
 document.querySelectorAll('.pc, .sgr, .sc, .ec, .orbit-btn').forEach(function(el) {
   el.addEventListener('mouseenter', function() {
-    cur.style.width = '22px'; cur.style.height = '22px';
-    cur.style.background = 'var(--accent2)';
     try { playDroplet(); } catch(e) {}
-  });
-  el.addEventListener('mouseleave', function() {
-    cur.style.width = '14px'; cur.style.height = '14px';
-    cur.style.background = 'var(--accent)';
-  });
-});
-
-// Other interactive elements - no sound, just cursor
-document.querySelectorAll('a, button, .course-chip').forEach(function(el) {
-  el.addEventListener('mouseenter', function() {
-    cur.style.width = '22px'; cur.style.height = '22px';
-    cur.style.background = 'var(--accent2)';
-  });
-  el.addEventListener('mouseleave', function() {
-    cur.style.width = '14px'; cur.style.height = '14px';
-    cur.style.background = 'var(--accent)';
   });
 });
 
