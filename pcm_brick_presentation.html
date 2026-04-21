@@ -901,9 +901,10 @@ footer span { color:var(--yellow); }
 
 <script>
 (function(){
-  var BV_THREE_RETRIES=25;
-  var BV_THREE_RETRY_DELAY=120;
+  var BV_THREE_MAX_RETRIES=25;
+  var BV_THREE_RETRY_DELAY_MS=120;
   function showFallback(msg){
+    var fallbackPrefix='Static fallback active. ';
     ['conv','pcm'].forEach(function(kind){
       var host=document.getElementById('bv-'+kind+'-cw');
       if(!host)return;
@@ -915,9 +916,9 @@ footer span { color:var(--yellow); }
       title.textContent=(kind==='conv'?'Conventional Brick':'PCM Smart Brick');
       var sub=document.createElement('div');
       sub.className='bv-fb-sub';
-      sub.textContent=(kind==='conv'
-        ?'Static fallback active. Standard clay brick has no latent-heat storage and transmits heat directly.'
-        :'Static fallback active. PCM brick stores/releases heat through phase change to smooth indoor temperature swings.');
+      sub.textContent=fallbackPrefix+(kind==='conv'
+        ?'Standard clay brick has no latent-heat storage and transmits heat directly.'
+        :'PCM brick stores/releases heat through phase change to smooth indoor temperature swings.');
       box.appendChild(title);
       box.appendChild(sub);
       host.appendChild(box);
@@ -943,7 +944,7 @@ footer span { color:var(--yellow); }
   }
   function mkScene(id){
     var cv=document.getElementById(id);
-    if(!cv||!cv.parentElement){throw new Error('Missing canvas host');}
+    if(!cv||!cv.parentElement){throw new Error('Canvas element or its parent container not found');}
     var W=Math.max(cv.parentElement.clientWidth||380,260),H=320;
     var rend;
     try{
@@ -1120,10 +1121,10 @@ footer span { color:var(--yellow); }
       showFallback('3D interactive view unavailable right now. Showing static comparison instead.');
       return;
     }
-    setTimeout(function(){waitForThree(tries-1);},BV_THREE_RETRY_DELAY);
+    setTimeout(function(){waitForThree(tries-1);},BV_THREE_RETRY_DELAY_MS);
   }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){waitForThree(BV_THREE_RETRIES);});}
-  else{waitForThree(BV_THREE_RETRIES);}
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){waitForThree(BV_THREE_MAX_RETRIES);});}
+  else{waitForThree(BV_THREE_MAX_RETRIES);}
 })();
 </script>
 
