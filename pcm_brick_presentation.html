@@ -3,861 +3,1146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PCM Smart Bricks — CHE 201</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>PCM Smart Bricks — CHE 201 Spring 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --card: #13131a;
-    --accent: #ff6b2b;
-    --cool: #2bd4ff;
-    --warm: #ff9f2b;
-    --text: #e8e8f0;
-    --muted: #7a7a9a;
-    --border: rgba(255,255,255,0.07);
-  }
-
-  * { margin:0; padding:0; box-sizing:border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-  }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    padding: 2rem;
-    text-align: center;
-  }
-
-  .hero-bg {
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255,107,43,0.12) 0%, transparent 70%),
-                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(43,212,255,0.08) 0%, transparent 60%);
-  }
-
-  .grid-bg {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 60px 60px;
-    animation: gridPulse 8s ease-in-out infinite;
-  }
-
-  @keyframes gridPulse {
-    0%,100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-
-  .tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--accent);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    background: rgba(255,107,43,0.1);
-    border: 1px solid rgba(255,107,43,0.3);
-    padding: 0.4rem 1rem;
-    border-radius: 2px;
-    margin-bottom: 1.5rem;
-    animation: fadeInDown 0.8s ease forwards;
-    opacity: 0;
-  }
-
-  .hero h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4rem, 12vw, 9rem);
-    line-height: 0.9;
-    letter-spacing: 0.02em;
-    animation: fadeInUp 1s ease 0.3s forwards;
-    opacity: 0;
-  }
-
-  .hero h1 span { color: var(--accent); }
-
-  .hero-sub {
-    font-size: 1.1rem;
-    color: var(--muted);
-    max-width: 520px;
-    margin: 1.5rem auto 0;
-    line-height: 1.7;
-    animation: fadeInUp 1s ease 0.6s forwards;
-    opacity: 0;
-  }
-
-  .scroll-hint {
-    position: absolute;
-    bottom: 2.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    animation: bounce 2s ease-in-out infinite, fadeInUp 1s ease 1.2s forwards;
-    opacity: 0;
-  }
-
-  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
-
-  /* ── SECTIONS ── */
-  section {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 6rem 2rem;
-  }
-
-  .section-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 1;
-    margin-bottom: 2.5rem;
-  }
-
-  /* ── HOW IT WORKS ── */
-  .how-works {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 3rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .brick-viz {
-    display: flex;
-    align-items: stretch;
-    gap: 0;
-    height: 220px;
-    border-radius: 12px;
-    overflow: hidden;
-    margin: 2.5rem 0;
-    position: relative;
-  }
-
-  .brick-side {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    gap: 0.75rem;
-    position: relative;
-    transition: all 0.4s ease;
-  }
-
-  .day-side {
-    background: linear-gradient(135deg, rgba(255,159,43,0.2), rgba(255,107,43,0.1));
-    border-right: 1px solid var(--border);
-  }
-
-  .night-side {
-    background: linear-gradient(135deg, rgba(43,212,255,0.1), rgba(43,100,255,0.15));
-  }
-
-  .sun-icon {
-    font-size: 2.5rem;
-    animation: spin 10s linear infinite;
-  }
-
-  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-
-  .moon-icon { font-size: 2.5rem; animation: sway 4s ease-in-out infinite; }
-  @keyframes sway { 0%,100%{transform:rotate(-10deg)} 50%{transform:rotate(10deg)} }
-
-  .side-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    letter-spacing: 0.05em;
-  }
-
-  .side-desc {
-    font-size: 0.82rem;
-    color: var(--muted);
-    text-align: center;
-    line-height: 1.5;
-  }
-
-  .heat-arrow {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%,-50%);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .arrow-box {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    width: 64px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
-
-  /* ── CYCLE ANIMATION ── */
-  .cycle-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    margin: 2.5rem 0;
-    flex-wrap: wrap;
-  }
-
-  .cycle-step {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem 1.2rem;
-    text-align: center;
-    width: 160px;
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  .cycle-step.visible {
-    animation: stepIn 0.6s ease forwards;
-  }
-
-  @keyframes stepIn { to { opacity:1; transform:translateY(0); } }
-
-  .cycle-step .step-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-  .cycle-step .step-name {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    margin-bottom: 0.4rem;
-  }
-  .cycle-step p { font-size: 0.8rem; color: var(--muted); line-height: 1.4; }
-
-  .cycle-arrow {
-    font-size: 1.5rem;
-    color: var(--accent);
-    margin: 0 0.5rem;
-    animation: arrowPulse 1.5s ease-in-out infinite;
-  }
-
-  @keyframes arrowPulse { 0%,100%{opacity:0.4; transform:translateX(0)} 50%{opacity:1; transform:translateX(4px)} }
-
-  /* ── STATS ── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2.5rem;
-  }
-
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 2rem 1.5rem;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(24px);
-  }
-
-  .stat-card.visible { animation: stepIn 0.7s ease forwards; }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-  }
-
-  .stat-number {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3.5rem;
-    color: var(--accent);
-    line-height: 1;
-    counter-reset: num;
-  }
-
-  .stat-unit {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-top: 0.3rem;
-  }
-
-  .stat-desc { font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem; line-height: 1.5; }
-
-  /* ── COUNTER ANIMATION ── */
-  .count-up { display: inline-block; }
-
-  /* ── WHERE TO USE ── */
-  .use-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.2rem;
-    margin-top: 2rem;
-  }
-
-  .use-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.8rem;
-    display: flex;
-    gap: 1.2rem;
-    align-items: flex-start;
-    transition: border-color 0.3s, transform 0.3s;
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-
-  .use-card.visible { animation: slideIn 0.6s ease forwards; }
-  @keyframes slideIn { to { opacity:1; transform:translateX(0); } }
-
-  .use-card:hover {
-    border-color: rgba(255,107,43,0.4);
-    transform: translateY(-4px);
-  }
-
-  .use-icon { font-size: 2rem; flex-shrink: 0; }
-  .use-text h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.3rem; }
-  .use-text p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
-
-  /* ── RESEARCH ── */
-  .research-list { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 2rem; }
-
-  .research-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 12px 12px 0;
-    padding: 1.5rem 1.8rem;
-    opacity: 0;
-    transform: translateX(-16px);
-  }
-
-  .research-card.visible { animation: slideIn 0.6s ease forwards; }
-
-  .research-card .journal {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 0.4rem;
-  }
-
-  .research-card h3 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.5rem; }
-  .research-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
-  .research-card .finding {
-    margin-top: 0.75rem;
-    background: rgba(255,107,43,0.08);
-    border-radius: 6px;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.82rem;
-    color: var(--text);
-    border-left: 2px solid var(--accent);
-  }
-
-  /* ── FORMULA ── */
-  .formula-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2.5rem;
-    margin-top: 2rem;
-    text-align: center;
-  }
-
-  .formula {
-    font-family: 'Space Mono', monospace;
-    font-size: clamp(1rem, 3vw, 1.8rem);
-    color: var(--cool);
-    margin: 1rem 0;
-    letter-spacing: 0.05em;
-  }
-
-  .formula span { color: var(--accent); }
-  .formula-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-top: 0.5rem; }
-
-  /* ── TEMP METER ── */
-  .meter-row {
-    display: flex;
-    gap: 2rem;
-    margin-top: 2.5rem;
-    flex-wrap: wrap;
-  }
-
-  .meter {
-    flex: 1;
-    min-width: 180px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-align: center;
-  }
-
-  .meter-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; font-family: 'Space Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; }
-
-  .bar-track {
-    height: 10px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 5px;
-    overflow: hidden;
-    margin: 0.8rem 0;
-  }
-
-  .bar-fill {
-    height: 100%;
-    border-radius: 5px;
-    width: 0%;
-    transition: width 2s ease;
-  }
-
-  .bar-fill.hot { background: linear-gradient(90deg, var(--warm), var(--accent)); }
-  .bar-fill.cool { background: linear-gradient(90deg, var(--cool), #6b8fff); }
-
-  .meter-val {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.2rem;
-    line-height: 1;
-  }
-
-  /* ── FOOTER CTA ── */
-  .footer-cta {
-    text-align: center;
-    padding: 6rem 2rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .footer-cta h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2rem, 6vw, 4.5rem);
-    line-height: 1;
-    margin-bottom: 1rem;
-  }
-
-  .footer-cta p { color: var(--muted); font-size: 1rem; }
-
-  /* ── DIVIDER ── */
-  .divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border);
-    margin: 0;
-  }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeInDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes fadeInUp   { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-
-  /* Floating particles */
-  .particles { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
-  .particle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0;
-    animation: float linear infinite;
-  }
-  @keyframes float {
-    0%  { opacity:0; transform:translateY(0) scale(0); }
-    10% { opacity:0.6; }
-    90% { opacity:0.6; }
-    100%{ opacity:0; transform:translateY(-120vh) scale(1.5); }
-  }
-
-  /* Responsive */
-  @media(max-width:600px) {
-    .cycle-arrow { display:none; }
-    .cycle-step { width:130px; }
-  }
+:root {
+  --coral: #FF5C35;
+  --green: #22C55E;
+  --yellow: #FBBF24;
+  --blue: #3B82F6;
+  --dark: #0D0D0D;
+  --navy: #0F1B33;
+  --cream: #FFFBF5;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Crimson Pro', Georgia, serif; background: var(--cream); color: var(--dark); overflow-x: hidden; font-size: 18px; }
+h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(13,13,13,0.92); backdrop-filter: blur(14px);
+  padding: 12px 40px; display: flex; justify-content: space-between; align-items: center;
+}
+.nav-logo { font-family: 'Cinzel',serif; font-weight: 700; font-size: 0.85rem; color: var(--yellow); letter-spacing: 3px; }
+.nav-links { display: flex; gap: 20px; list-style: none; }
+.nav-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.68rem; font-family: 'Cinzel', serif; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; transition: color 0.2s; }
+.nav-links a:hover { color: var(--yellow); }
+
+/* HERO */
+#hero {
+  min-height: 100vh; background: var(--dark);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; position: relative; overflow: hidden; padding: 100px 40px 80px;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 55%, rgba(255,92,53,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 18%, rgba(34,197,94,0.16) 0%, transparent 50%),
+    radial-gradient(ellipse at 55% 85%, rgba(251,191,36,0.14) 0%, transparent 50%);
+}
+.hero-chip {
+  display: inline-block; border: 1px solid rgba(251,191,36,0.45); color: var(--yellow);
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
+  padding: 7px 18px; border-radius: 100px; margin-bottom: 36px; position: relative;
+  font-family: 'Cinzel', serif;
+}
+#hero h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.8rem, 9vw, 7.5rem); font-weight: 900; color: #fff;
+  line-height: 0.95; letter-spacing: 4px; position: relative; margin-bottom: 28px;
+  text-transform: uppercase;
+}
+#hero h1 span { color: var(--coral); }
+.hero-sub {
+  font-size: clamp(1.1rem, 2vw, 1.4rem); color: rgba(255,255,255,0.62); font-weight: 300;
+  max-width: 560px; line-height: 1.8; position: relative; margin-bottom: 44px;
+  font-style: italic; font-family: 'Crimson Pro', serif;
+}
+.hero-pills { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; position: relative; }
+.hero-pill {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.7); padding: 8px 20px; border-radius: 100px;
+  font-size: 0.78rem; font-weight: 400; font-family: 'Crimson Pro', serif; letter-spacing: 0.5px;
+}
+.scroll-ind {
+  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  color: rgba(255,255,255,0.35); font-size: 0.65rem; letter-spacing: 2px;
+  text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: scrollBounce 2.2s infinite;
+}
+.scroll-line { width: 1px; height: 38px; background: linear-gradient(to bottom, rgba(255,255,255,0.35), transparent); }
+@keyframes scrollBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+/* SHARED */
+section { padding: 100px 40px; }
+.container { max-width: 1080px; margin: 0 auto; }
+.sec-tag {
+  display: inline-block; font-size: 0.65rem; font-weight: 600; letter-spacing: 4px;
+  text-transform: uppercase; margin-bottom: 16px; padding: 4px 12px; border-radius: 4px;
+  font-family: 'Cinzel', serif;
+}
+.sec-title { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.08; margin-bottom: 18px; }
+.sec-sub { font-family: 'Crimson Pro', serif; font-size: 1.15rem; line-height: 1.78; opacity: 0.72; max-width: 620px; margin-bottom: 56px; font-weight: 300; }
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* 01 PROBLEM */
+#problem { background: var(--coral); color: white; }
+#problem .sec-tag { background: rgba(0,0,0,0.14); color: white; }
+#problem .sec-sub { color: rgba(255,255,255,0.78); }
+.prob-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+.prob-card { background: rgba(0,0,0,0.13); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 36px 28px; }
+.prob-num { font-family:'Playfair Display',serif; font-size: clamp(2.8rem,5.5vw,4.5rem); font-weight: 900; line-height: 1; margin-bottom: 8px; font-style: italic; }
+.prob-lbl { font-size: 1.05rem; line-height: 1.5; font-weight: 600; font-family:'Playfair Display',serif; }
+.prob-dsc { font-size: 0.9rem; opacity: 0.65; margin-top: 8px; line-height: 1.6; font-family:'Crimson Pro',serif; font-weight:300; }
+
+/* 02 PRODUCT SELECTION */
+#product { background: var(--cream); }
+#product .sec-tag { background: rgba(255,92,53,0.1); color: var(--coral); }
+.prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+.why-stack { display: flex; flex-direction: column; gap: 14px; }
+.why-card {
+  display: flex; gap: 14px; align-items: flex-start; background: white;
+  border-radius: 12px; padding: 18px 20px;
+  box-shadow: 0 2px 18px rgba(0,0,0,0.055); transition: transform 0.2s, box-shadow 0.2s;
+}
+.why-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
+.why-ico { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+.why-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; font-family:'Playfair Display',serif; }
+.why-card p { font-size: 0.95rem; opacity: 0.62; line-height: 1.6; font-family:'Crimson Pro',serif; font-weight:300; }
+.concept-box { background: var(--dark); border-radius: 20px; padding: 44px 38px; color: white; position: relative; overflow: hidden; }
+.concept-box::before {
+  content:''; position:absolute; top:-40%; right:-15%; width:280px; height:280px;
+  background: radial-gradient(circle, rgba(251,191,36,0.13) 0%, transparent 70%); pointer-events:none;
+}
+.concept-eq { font-family:'Playfair Display',serif; font-size: 2.2rem; font-weight: 800; color: var(--yellow); margin: 20px 0 10px; font-style: italic; }
+.cycle-list { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+.cycle-item { display: flex; align-items: center; gap: 10px; font-size: 1rem; opacity: 0.82; font-family:'Crimson Pro',serif; font-weight:400; }
+.cdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* 03 CURRENT STATE */
+#current { background: var(--navy); color: white; }
+#current .sec-tag { background: rgba(59,130,246,0.18); color: #60A5FA; }
+#current .sec-sub { color: rgba(255,255,255,0.58); }
+.tab-bar { display: flex; gap: 4px; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px; margin-bottom: 30px; flex-wrap: wrap; }
+.tb { flex:1; min-width:110px; padding:10px 14px; border:none; background:transparent; color:rgba(255,255,255,0.48); font-family:'Cinzel',serif; font-weight:600; font-size:0.68rem; border-radius:8px; cursor:pointer; transition:all 0.2s; letter-spacing:1px; text-transform:uppercase; }
+.tb.active { background: var(--blue); color: white; }
+.tc { display:none; animation: fadeUp 0.3s ease; }
+.tc.active { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.mkt-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:24px; }
+.mkt-s { background:rgba(255,255,255,0.05); border-radius:12px; padding:22px; text-align:center; }
+.mkt-s .mn { font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:800; color:var(--yellow); font-style:italic; }
+.mkt-s .ml { font-size:0.88rem; opacity:0.58; margin-top:4px; font-family:'Crimson Pro',serif; font-weight:300; }
+.co-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.co-card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); border-radius:12px; padding:22px; }
+.co-name { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; color:#60A5FA; margin-bottom:5px; }
+.co-desc { font-size:0.92rem; opacity:0.62; line-height:1.6; font-family:'Crimson Pro',serif; font-weight:300; }
+.flow { display:flex; align-items:center; overflow-x:auto; padding:16px 0; gap:0; }
+.fb { flex-shrink:0; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.13); border-radius:12px; padding:16px 18px; text-align:center; min-width:150px; }
+.fb .ft { font-family:'Cinzel',serif; font-size:0.72rem; font-weight:600; margin-bottom:8px; color:var(--yellow); letter-spacing:1px; }
+.fb .fi { font-size:0.88rem; opacity:0.65; line-height:1.65; font-family:'Crimson Pro',serif; font-weight:300; }
+.fb.proc { background:var(--blue); border-color:var(--blue); }
+.fb.proc .ft { color:white; }
+.fb.proc .fi { color:rgba(255,255,255,0.7); }
+.farr { width:42px; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.35); font-size:1.3rem; }
+.ebar-wrap { display:flex; flex-direction:column; gap:12px; margin-top:12px; }
+.ebar-row { display:flex; align-items:center; gap:14px; }
+.ebar-lbl { font-size:0.88rem; min-width:210px; opacity:0.78; font-family:'Crimson Pro',serif; }
+.ebar-track { flex:1; height:26px; background:rgba(255,255,255,0.07); border-radius:6px; overflow:hidden; }
+.ebar-fill { height:100%; border-radius:6px; display:flex; align-items:center; padding-left:10px; font-size:0.78rem; font-weight:600; color:white; font-family:'Crimson Pro',serif; }
+
+/* 04 SUSTAINABLE DESIGN */
+#sustainable { background: #0A1F10; color: white; }
+#sustainable .sec-tag { background:rgba(34,197,94,0.14); color:#4ADE80; }
+#sustainable .sec-sub { color:rgba(255,255,255,0.58); }
+.innov-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:22px; margin-bottom:52px; }
+.innov-card { background:rgba(255,255,255,0.04); border:1px solid rgba(34,197,94,0.2); border-radius:16px; padding:30px; transition:border-color 0.2s, background 0.2s; }
+.innov-card:hover { border-color:rgba(34,197,94,0.48); background:rgba(34,197,94,0.05); }
+.innov-ico { font-size:1.9rem; margin-bottom:14px; }
+.innov-card h3 { font-size:1.1rem; font-weight:700; color:#4ADE80; margin-bottom:7px; font-family:'Playfair Display',serif; }
+.innov-card p { font-size:0.95rem; opacity:0.68; line-height:1.7; font-family:'Crimson Pro',serif; font-weight:300; }
+.thermo-box { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09); border-radius:16px; padding:36px; margin-bottom:36px; }
+.thermo-box h3 { font-size:1.1rem; font-weight:700; color:#4ADE80; margin-bottom:6px; font-family:'Playfair Display',serif; }
+.eq-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:22px; }
+.eq-card { text-align:center; padding:22px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.07); }
+.eq-f { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:800; color:var(--yellow); margin-bottom:8px; font-style:italic; }
+.eq-d { font-size:0.9rem; opacity:0.58; line-height:1.6; font-family:'Crimson Pro',serif; font-weight:300; }
+.ba-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.ba-card { border-radius:16px; padding:30px; }
+.ba-card.bef { background:rgba(255,92,53,0.09); border:1px solid rgba(255,92,53,0.28); }
+.ba-card.aft { background:rgba(34,197,94,0.09); border:1px solid rgba(34,197,94,0.28); }
+.ba-lbl { font-size:0.62rem; font-weight:600; letter-spacing:3px; text-transform:uppercase; margin-bottom:14px; font-family:'Cinzel',serif; }
+.ba-card.bef .ba-lbl { color:#FCA5A5; }
+.ba-card.aft .ba-lbl { color:#86EFAC; }
+.ba-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.ba-list li { font-size:0.95rem; opacity:0.8; padding-left:16px; position:relative; line-height:1.5; font-family:'Crimson Pro',serif; font-weight:400; }
+.ba-list li::before { content:'•'; position:absolute; left:0; }
+.ba-card.bef .ba-list li::before { color:#FCA5A5; }
+.ba-card.aft .ba-list li::before { color:#86EFAC; }
+
+/* 05 BRICK VISUAL */
+#brickvisual { background: #FFF7E6; color: var(--dark); }
+#brickvisual .sec-tag { background:rgba(251,191,36,0.2); color:#92400E; }
+#brickvisual .sec-sub { color:#78350F; }
+.brick-comp { display:grid; grid-template-columns:1fr 1fr; gap:36px; margin-top:44px; }
+.bp { border-radius:20px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.11); }
+.bp-head { padding:18px 26px; font-family:'Cinzel',serif; font-weight:700; font-size:0.82rem; letter-spacing:1.5px; text-transform:uppercase; }
+.conv .bp-head { background:#64748B; color:white; }
+.pcm .bp-head { background:var(--coral); color:white; }
+.bp-vis { background:white; padding:28px; min-height:270px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+.bp-vis p { font-size:0.9rem; color:#64748B; text-align:center; line-height:1.6; font-family:'Crimson Pro',serif; font-style:italic; }
+.bp-metrics { padding:20px 24px; display:grid; grid-template-columns:1fr 1fr; gap:10px; background:#F8FAFC; }
+.metric { padding:10px 12px; background:white; border-radius:8px; }
+.metric-v { font-family:'Playfair Display',serif; font-weight:800; font-size:1.3rem; font-style:italic; }
+.metric-k { font-size:0.72rem; opacity:0.56; margin-top:2px; font-family:'Crimson Pro',serif; }
+.conv .metric-v { color:#64748B; }
+.pcm .metric-v { color:var(--coral); }
+.dn-toggle { display:inline-flex; background:var(--dark); border-radius:100px; padding:4px; gap:4px; }
+.dn-opt { padding:10px 26px; border-radius:100px; border:none; cursor:pointer; font-family:'Cinzel',serif; font-weight:600; font-size:0.72rem; letter-spacing:1px; transition:all 0.2s; background:transparent; color:rgba(255,255,255,0.5); }
+.dn-opt.active { background:var(--yellow); color:var(--dark); }
+/* PCM SVG animations */
+.heat-w { animation: hwAnim 2s ease-in-out infinite; }
+.heat-w:nth-child(2){animation-delay:0.28s} .heat-w:nth-child(3){animation-delay:0.56s}
+@keyframes hwAnim { 0%,100%{transform:translateY(0);opacity:0.8} 50%{transform:translateY(-3px);opacity:1} }
+.pcm-cell { animation: cellPulse 2.8s ease-in-out infinite; }
+.pcm-cell:nth-child(2){animation-delay:0.5s}.pcm-cell:nth-child(3){animation-delay:1s}
+.pcm-cell:nth-child(4){animation-delay:1.5s}.pcm-cell:nth-child(5){animation-delay:0.8s}
+.pcm-cell:nth-child(6){animation-delay:1.3s}
+@keyframes cellPulse { 0%,100%{fill:#93C5FD} 50%{fill:#FBBF24} }
+
+/* 06 EVALUATION */
+#evaluation { background:var(--dark); color:white; }
+#evaluation .sec-tag { background:rgba(251,191,36,0.14); color:var(--yellow); }
+#evaluation .sec-sub { color:rgba(255,255,255,0.58); }
+.eval-grid { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+.ev-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:30px; }
+.ev-card h3 { font-size:1rem; font-weight:700; margin-bottom:20px; font-family:'Playfair Display',serif; }
+.lca-bars { display:flex; flex-direction:column; gap:18px; }
+.lca-pair { display:flex; flex-direction:column; gap:5px; }
+.lca-head { font-size:0.88rem; opacity:0.68; margin-bottom:4px; font-family:'Crimson Pro',serif; }
+.lca-track { height:9px; background:rgba(255,255,255,0.08); border-radius:100px; overflow:hidden; }
+.lca-fill { height:100%; border-radius:100px; }
+.lca-fill.cv { background:#EF4444; } .lca-fill.pd { background:#22C55E; }
+.lca-val { font-size:0.82rem; opacity:0.5; margin-top:2px; font-family:'Crimson Pro',serif; }
+.cost-tbl { width:100%; border-collapse:collapse; font-size:0.92rem; font-family:'Crimson Pro',serif; }
+.cost-tbl th { text-align:left; padding:8px 10px; font-size:0.62rem; opacity:0.46; font-weight:600; letter-spacing:2px; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.08); font-family:'Cinzel',serif; }
+.cost-tbl td { padding:10px 10px; border-bottom:1px solid rgba(255,255,255,0.05); opacity:0.78; }
+.cost-tbl .sav { color:#4ADE80; font-weight:600; }
+.impr-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.impr-item { background:rgba(255,255,255,0.04); border-radius:9px; padding:14px; }
+.impr-item .il { font-size:0.82rem; opacity:0.56; margin-bottom:5px; font-family:'Crimson Pro',serif; }
+.impr-item .iv { font-family:'Playfair Display',serif; font-weight:800; font-size:1.2rem; color:#4ADE80; font-style:italic; }
+.mkt-tags { display:flex; flex-wrap:wrap; gap:9px; margin-top:12px; }
+.mkt-tag { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.11); border-radius:8px; padding:9px 14px; font-size:0.88rem; line-height:1.4; font-family:'Crimson Pro',serif; }
+
+/* 07 CHALLENGES */
+#challenges { background:#F1F5F9; color:var(--dark); }
+#challenges .sec-tag { background:rgba(239,68,68,0.1); color:#DC2626; }
+.ch-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:22px; }
+.ch-card { background:white; border-radius:16px; padding:30px; border-left:4px solid var(--coral); box-shadow:0 2px 18px rgba(0,0,0,0.055); transition:transform 0.2s; }
+.ch-card:hover { transform:translateY(-3px); }
+.ch-ico { font-size:1.8rem; margin-bottom:14px; }
+.ch-card h3 { font-size:1.05rem; font-weight:700; color:#DC2626; margin-bottom:7px; font-family:'Playfair Display',serif; }
+.ch-prob { font-size:0.95rem; opacity:0.68; margin-bottom:12px; line-height:1.6; font-family:'Crimson Pro',serif; font-weight:300; }
+.ch-sol { font-size:0.95rem; color:#15803D; font-weight:600; padding:10px 13px; background:rgba(21,128,61,0.07); border-radius:8px; line-height:1.6; font-family:'Crimson Pro',serif; }
+.ch-sol::before { content:'✓ Solution: '; font-weight:700; }
+
+/* 08 PROTOTYPE */
+#prototype { background:#0A1A0F; color:white; }
+#prototype .sec-tag { background:rgba(34,197,94,0.14); color:#4ADE80; }
+#prototype .sec-sub { color:rgba(255,255,255,0.58); }
+.proto-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:44px; }
+.proto-card { background:rgba(255,255,255,0.04); border:2px dashed rgba(255,255,255,0.14); border-radius:16px; padding:38px 22px; text-align:center; min-height:230px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; cursor:pointer; transition:border-color 0.2s, background 0.2s; }
+.proto-card:hover { border-color:rgba(34,197,94,0.42); background:rgba(34,197,94,0.04); }
+.proto-ico { font-size:2.4rem; }
+.proto-card h3 { font-size:1rem; font-weight:700; color:#4ADE80; font-family:'Playfair Display',serif; }
+.proto-card p { font-size:0.92rem; opacity:0.5; line-height:1.6; font-family:'Crimson Pro',serif; font-weight:300; }
+.proto-add { font-size:0.68rem; color:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:100px; padding:5px 14px; margin-top:4px; font-family:'Cinzel',serif; letter-spacing:1px; }
+
+/* 09 REFERENCES */
+#references { background:var(--dark); color:white; }
+#references .sec-tag { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.55); }
+.ref-list { display:flex; flex-direction:column; gap:10px; margin-top:36px; counter-reset:ref; }
+.ref-item { counter-increment:ref; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:15px 18px 15px 52px; font-size:0.95rem; opacity:0.68; line-height:1.7; position:relative; transition:opacity 0.2s; font-family:'Crimson Pro',serif; font-weight:300; }
+.ref-item:hover { opacity:1; }
+.ref-item::before { content:counter(ref); position:absolute; left:17px; top:15px; width:22px; height:22px; background:rgba(255,255,255,0.07); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-weight:700; font-size:0.62rem; color:var(--yellow); }
+footer { background:var(--dark); border-top:1px solid rgba(255,255,255,0.06); padding:28px 40px; text-align:center; color:rgba(255,255,255,0.3); font-size:0.82rem; font-family:'Cinzel',serif; letter-spacing:1px; }
+footer span { color:var(--yellow); }
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  section{padding:68px 22px}
+  nav{padding:12px 20px}
+  .nav-links{display:none}
+  .prob-grid,.prod-grid,.innov-grid,.ba-grid,.brick-comp,.eval-grid,.ch-grid,.proto-grid,.co-grid,.mkt-stats,.eq-grid,.impr-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<!-- ── HERO ── -->
-<div class="hero">
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">PCM BRICKS ◆</div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#product">Selection</a></li>
+    <li><a href="#current">Current State</a></li>
+    <li><a href="#sustainable">Design</a></li>
+    <li><a href="#brickvisual">Comparison</a></li>
+    <li><a href="#evaluation">Evaluation</a></li>
+    <li><a href="#challenges">Challenges</a></li>
+    <li><a href="#prototype">Prototype</a></li>
+    <li><a href="#references">Refs</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
   <div class="hero-bg"></div>
-  <div class="grid-bg"></div>
-  <div class="particles" id="particles"></div>
-  <div class="tag">CHE 201 · Spring 2026 · Sustainable Design</div>
+  <div class="hero-chip">CHE 201 · Spring 2026 · University of Illinois Chicago</div>
   <h1>SMART<br><span>THERMAL</span><br>BRICKS</h1>
   <p class="hero-sub">Phase-change materials embedded in building bricks that passively regulate indoor temperature — no electricity, no moving parts.</p>
-  <div class="scroll-hint">▼ &nbsp; SCROLL TO EXPLORE</div>
-</div>
-
-<div class="divider"></div>
-
-<!-- ── WHAT IS IT ── -->
-<section>
-  <div class="section-label">01 — The Idea</div>
-  <h2 class="section-title">A BRICK THAT<br>THINKS IN HEAT</h2>
-
-  <div class="how-works">
-    <p style="color:var(--muted); line-height:1.8; max-width:680px;">
-      A phase-change material (PCM) — like paraffin wax or a salt hydrate — is encapsulated inside a honeycomb cavity within a standard building brick. When ambient temperature rises, the PCM <strong style="color:var(--warm)">melts</strong>, absorbing large amounts of energy without temperature change. At night, it <strong style="color:var(--cool)">solidifies</strong>, releasing that stored energy back — keeping rooms naturally stable.
-    </p>
-
-    <div class="brick-viz">
-      <div class="brick-side day-side">
-        <div class="sun-icon">☀️</div>
-        <div class="side-label" style="color:var(--warm)">Daytime</div>
-        <div class="side-desc">Heat enters wall<br>PCM <strong>melts</strong> → absorbs energy<br>Interior stays cool</div>
-      </div>
-      <div class="heat-arrow">
-        <div class="arrow-box">🔥</div>
-      </div>
-      <div class="brick-side night-side">
-        <div class="moon-icon">🌙</div>
-        <div class="side-label" style="color:var(--cool)">Nighttime</div>
-        <div class="side-desc">Temperature drops<br>PCM <strong>solidifies</strong> → releases heat<br>Interior stays warm</div>
-      </div>
-    </div>
-
-    <p style="font-family:'Space Mono',monospace; font-size:0.75rem; color:var(--muted); text-align:center;">
-      The secret: latent heat stores 5–14× more energy than sensible heat alone.
-    </p>
+  <div class="hero-pills">
+    <span class="hero-pill">🧱 PCM Integration</span>
+    <span class="hero-pill">🌱 Bio-Based Materials</span>
+    <span class="hero-pill">⚡ Passive Cooling</span>
+    <span class="hero-pill">♻️ Sustainable Design</span>
+  </div>
+  <div class="scroll-ind">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<!-- ── HOW THE CYCLE WORKS ── -->
-<section>
-  <div class="section-label">02 — The Cycle</div>
-  <h2 class="section-title">24-HOUR<br>HEAT CYCLE</h2>
-
-  <div class="cycle-container" id="cycle">
-    <div class="cycle-step" style="animation-delay:0.0s">
-      <div class="step-icon">🌡️</div>
-      <div class="step-name">Morning</div>
-      <p>Outside temp rises above 23–27°C threshold</p>
-    </div>
-    <div class="cycle-arrow">→</div>
-    <div class="cycle-step" style="animation-delay:0.2s">
-      <div class="step-icon">💧</div>
-      <div class="step-name">Melting</div>
-      <p>PCM absorbs heat silently as it changes phase</p>
-    </div>
-    <div class="cycle-arrow">→</div>
-    <div class="cycle-step" style="animation-delay:0.4s">
-      <div class="step-icon">🏠</div>
-      <div class="step-name">Afternoon</div>
-      <p>Room stays cool — no AC needed during peak hours</p>
-    </div>
-    <div class="cycle-arrow">→</div>
-    <div class="cycle-step" style="animation-delay:0.6s">
-      <div class="step-icon">❄️</div>
-      <div class="step-name">Night</div>
-      <p>PCM solidifies, releasing stored warmth into room</p>
-    </div>
-    <div class="cycle-arrow">→</div>
-    <div class="cycle-step" style="animation-delay:0.8s">
-      <div class="step-icon">🔄</div>
-      <div class="step-name">Reset</div>
-      <p>Ready for the next 24-hour cycle — indefinitely</p>
-    </div>
-  </div>
-
-  <!-- Thermodynamic Formula -->
-  <div class="formula-box">
-    <div class="section-label" style="margin-bottom:0.5rem">Key Thermodynamic Equations</div>
-    <div class="formula">Q = m × <span>L</span></div>
-    <div class="formula-desc">
-      Q = heat stored (kJ) &nbsp;|&nbsp; m = mass of PCM (kg) &nbsp;|&nbsp; <span style="color:var(--accent)">L</span> = latent heat of fusion (kJ/kg)<br>
-      Paraffin wax: L ≈ 200 kJ/kg &nbsp;&nbsp;·&nbsp;&nbsp; Salt hydrates: L ≈ 150–300 kJ/kg
-    </div>
-    <div class="formula" style="margin-top:1.5rem; color: var(--warm)">ΔS = ΔH<sub>fusion</sub> / T<sub>melt</sub></div>
-    <div class="formula-desc">Entropy change during phase transition — quantifiable and directly linked to thermodynamic efficiency.</div>
-  </div>
-
-  <!-- Temperature bars -->
-  <div class="meter-row" id="meters">
-    <div class="meter">
-      <div class="meter-label">CONVENTIONAL BRICK — INDOOR PEAK TEMP</div>
-      <div class="meter-val" style="color:var(--accent)">38°C</div>
-      <div class="bar-track"><div class="bar-fill hot" id="bar1"></div></div>
-      <div style="font-size:0.78rem; color:var(--muted)">Full heat transfer — uncomfortable</div>
-    </div>
-    <div class="meter">
-      <div class="meter-label">PCM BRICK — INDOOR PEAK TEMP</div>
-      <div class="meter-val" style="color:var(--cool)">28°C</div>
-      <div class="bar-track"><div class="bar-fill cool" id="bar2"></div></div>
-      <div style="font-size:0.78rem; color:var(--muted)">Up to 9.5°C cooler — peer-reviewed result</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── STATS ── -->
-<section>
-  <div class="section-label">03 — By the Numbers</div>
-  <h2 class="section-title">THE IMPACT<br>IN DATA</h2>
-
-  <div class="stats-grid" id="stats">
-    <div class="stat-card" style="animation-delay:0.0s">
-      <div class="stat-number"><span class="count-up" data-target="30">0</span>%</div>
-      <div class="stat-unit">ENERGY REDUCTION</div>
-      <div class="stat-desc">Optimized PCM integration can cut building heating & cooling energy use by up to 30%.</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.15s">
-      <div class="stat-number"><span class="count-up" data-target="9">0</span>.5°C</div>
-      <div class="stat-unit">TEMP REDUCTION</div>
-      <div class="stat-desc">Single-layer PCM bricks reduced indoor peak temperature by up to 9.5°C vs. standard bricks.</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.3s">
-      <div class="stat-number"><span class="count-up" data-target="60">0</span>%</div>
-      <div class="stat-unit">HEAT TRANSFER DROP</div>
-      <div class="stat-desc">Double-layer PCM bricks showed a 60% reduction in heat transfer vs. conventional bricks.</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.45s">
-      <div class="stat-number"><span class="count-up" data-target="40">0</span>%</div>
-      <div class="stat-unit">BUILDINGS' ENERGY SHARE</div>
-      <div class="stat-desc">Buildings consume ~40% of global final energy — walls alone account for 25% of building losses.</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.6s">
-      <div class="stat-number"><span class="count-up" data-target="79">0</span>%</div>
-      <div class="stat-unit">HEAT CAPACITY BOOST</div>
-      <div class="stat-desc">Adding 20% PCM content by weight increased brick heat capacity by ~79% in lab tests.</div>
-    </div>
-    <div class="stat-card" style="animation-delay:0.75s">
-      <div class="stat-number">15.5×</div>
-      <div class="stat-unit">LATENT HEAT GAIN</div>
-      <div class="stat-desc">Latent heat storage improved by a factor of 15.5 compared to standard compressed earth bricks.</div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ── WHERE TO USE ── -->
-<section>
-  <div class="section-label">04 — Applications</div>
-  <h2 class="section-title">WHERE THESE<br>BRICKS SHINE</h2>
-  <p style="color:var(--muted); max-width:580px; line-height:1.8; margin-bottom:0.5rem;">
-    PCM bricks work best where outdoor temperatures swing significantly between day and night — maximizing the charge/discharge cycle.
-  </p>
-
-  <div class="use-grid" id="usecards">
-    <div class="use-card" style="animation-delay:0.0s">
-      <div class="use-icon">🏜️</div>
-      <div class="use-text">
-        <h3>Hot & Arid Climates</h3>
-        <p>Arizona, Middle East, India, North Africa — huge diurnal swings make every cycle count. AC costs cut dramatically.</p>
+<!-- 01 THE PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <span class="sec-tag">01 — The Problem</span>
+    <h2 class="sec-title">Buildings are bleeding energy.</h2>
+    <p class="sec-sub">Conventional construction traps us in a cycle of mechanical heating and cooling — expensive, polluting, and entirely unnecessary with the right materials.</p>
+    <div class="prob-grid reveal">
+      <div class="prob-card">
+        <div class="prob-num">40%</div>
+        <div class="prob-lbl">of global final energy consumed by buildings</div>
+        <div class="prob-dsc">Walls alone account for 25% of that loss — making building envelopes the single highest-leverage intervention point in sustainable design.</div>
       </div>
-    </div>
-    <div class="use-card" style="animation-delay:0.1s">
-      <div class="use-icon">🏘️</div>
-      <div class="use-text">
-        <h3>Affordable Housing</h3>
-        <p>In developing regions where AC is unaffordable, passive cooling saves lives during heat events — not just money.</p>
+      <div class="prob-card">
+        <div class="prob-num">~2.4B</div>
+        <div class="prob-lbl">people in hot/arid climates where passive cooling is life-critical</div>
+        <div class="prob-dsc">Middle East, South Asia, Sub-Saharan Africa — where air conditioning is unaffordable and heat events cause preventable deaths.</div>
       </div>
-    </div>
-    <div class="use-card" style="animation-delay:0.2s">
-      <div class="use-icon">🏫</div>
-      <div class="use-text">
-        <h3>Schools & Clinics</h3>
-        <p>Public buildings with large occupant loads benefit most — lower HVAC bills free budget for education and healthcare.</p>
-      </div>
-    </div>
-    <div class="use-card" style="animation-delay:0.3s">
-      <div class="use-icon">🏗️</div>
-      <div class="use-text">
-        <h3>New Construction</h3>
-        <p>Easiest to integrate during new builds — adds minimal structural weight and drops overall energy code requirements.</p>
-      </div>
-    </div>
-    <div class="use-card" style="animation-delay:0.4s">
-      <div class="use-icon">🔄</div>
-      <div class="use-text">
-        <h3>Retrofits</h3>
-        <p>PCM panels and boards can be added to existing interior walls — no demolition needed for existing buildings.</p>
-      </div>
-    </div>
-    <div class="use-card" style="animation-delay:0.5s">
-      <div class="use-icon">⚡</div>
-      <div class="use-text">
-        <h3>Grid Load Shifting</h3>
-        <p>Absorbing daytime heat reduces peak electricity demand — directly reducing strain on the power grid at crunch hours.</p>
+      <div class="prob-card">
+        <div class="prob-num">0.28 kg</div>
+        <div class="prob-lbl">CO₂ per kg of conventional brick produced</div>
+        <div class="prob-dsc">Kiln firing at 900–1200°C with zero heat recovery. Billions of bricks fired every year carrying this footprint — no current design addresses it.</div>
       </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<!-- ── RESEARCH ── -->
-<section>
-  <div class="section-label">05 — Peer-Reviewed Research</div>
-  <h2 class="section-title">BACKED BY<br>SCIENCE</h2>
-
-  <div class="research-list" id="research">
-    <div class="research-card" style="animation-delay:0.0s">
-      <div class="journal">ScienceDirect · Energy Storage · 2025</div>
-      <h3>Enhancing Thermal Performance in Concrete Bricks with Phase Change Materials</h3>
-      <p>Numerical study using ANSYS Fluent comparing RT37, RT42, and composite PCMs embedded in brick cavities.</p>
-      <div class="finding">🔬 Key finding: RT37 PCM lowered indoor temperature by 6.68°C, reduced heat gain by 4.65W, and cut CO₂ emissions by 0.112 kg/day per brick.</div>
-    </div>
-
-    <div class="research-card" style="animation-delay:0.15s">
-      <div class="journal">ScienceDirect · Energy Storage · 2025</div>
-      <h3>Eco-Friendly Compressed Earth Bricks Enhanced with Micro-Encapsulated PCM</h3>
-      <p>Experimental study varying PCM content 0–20% by weight, measuring mechanical and thermal performance across 5 melt-solidification cycles.</p>
-      <div class="finding">🔬 Key finding: 20% mPCM content increased heat capacity ~79% and improved latent heat storage by a factor of 15.5, while maintaining structural requirements.</div>
-    </div>
-
-    <div class="research-card" style="animation-delay:0.3s">
-      <div class="journal">MDPI Materials · 2025</div>
-      <h3>Phase Change Materials in Residential Buildings: Challenges, Opportunities, and Performance</h3>
-      <p>Systematic literature review (PRISMA guidelines) covering 2015–2025 studies on PCM integration in walls, floors, ceilings, and windows.</p>
-      <div class="finding">🔬 Key finding: Optimized PCM integration can reduce building energy consumption by up to 30% and improve indoor thermal comfort.</div>
-    </div>
-
-    <div class="research-card" style="animation-delay:0.45s">
-      <div class="journal">ScienceDirect · Energy Buildings · 2022</div>
-      <h3>Year-Long Energy Analysis of Building Brick Filled with Phase Change Materials</h3>
-      <p>Long-term simulation comparing enthalpy-porosity and simplified models for PCMs in cylindrical brick cavities across full annual climate cycles.</p>
-      <div class="finding">🔬 Key finding: Single-layer PCM bricks reduced maximum temperature by up to 9.5°C; double-layer reduced heat transfer by 60%.</div>
-    </div>
-
-    <div class="research-card" style="animation-delay:0.6s">
-      <div class="journal">ScienceDirect · Review · 2023</div>
-      <h3>Comprehensive Review: PCM Integration in Building Bricks — Methods, Performance, Applications</h3>
-      <p>Covers macro-encapsulation in bricks, wallboards, and storage tanks. Introduces topology optimization for improved heat transfer structures.</p>
-      <div class="finding">🔬 Key finding: Wall bricks account for 25% of building energy consumption — PCM integration is one of the highest-leverage intervention points available.</div>
+<!-- 02 PRODUCT SELECTION -->
+<section id="product">
+  <div class="container">
+    <span class="sec-tag">02 — Product Selection</span>
+    <h2 class="sec-title">Why PCM Smart Bricks?</h2>
+    <p class="sec-sub">Four compelling reasons this product sits at the intersection of thermodynamic depth, real sustainability impact, and market traction.</p>
+    <div class="prod-grid reveal">
+      <div class="why-stack">
+        <div class="why-card">
+          <div class="why-ico" style="background:#FEF3C7;">🌡️</div>
+          <div>
+            <h4>Thermodynamic depth</h4>
+            <p>Latent heat storage, entropy balances, and phase transitions provide rich grounding in CHE 201 principles — energy, mass, and entropy balances all apply directly.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-ico" style="background:#DCFCE7;">🌍</div>
+          <div>
+            <h4>Real sustainability impact</h4>
+            <p>~30% HVAC energy reduction per building. Passive cooling requires zero electricity — directly addressing energy poverty and climate adaptation in hot climates.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-ico" style="background:#DBEAFE;">📈</div>
+          <div>
+            <h4>$3.5B market, 15% CAGR</h4>
+            <p>The global PCM market is growing fast. Green building codes, LEED certification requirements, and climate adaptation mandates are driving demand worldwide.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-ico" style="background:#FCE7F3;">♻️</div>
+          <div>
+            <h4>Bio-based innovation angle</h4>
+            <p>Replacing petroleum-derived paraffin with coconut fatty acids or stearic acid — same latent heat (150–220 kJ/kg), renewable feedstock, biodegradable end-of-life.</p>
+          </div>
+        </div>
+      </div>
+      <div class="concept-box">
+        <div style="font-size:0.72rem;font-weight:700;letter-spacing:2px;opacity:0.48;text-transform:uppercase;">The Core Value Proposition</div>
+        <div class="concept-eq">Q = m × L<sub style="font-size:1.1rem">f</sub></div>
+        <p style="font-size:0.88rem;opacity:0.68;line-height:1.65;">Latent heat stores 5–14× more energy per unit mass than sensible heat. A brick with PCM absorbs thermal energy silently during phase change — no temperature rise, no electricity, no moving parts.</p>
+        <div class="cycle-list">
+          <div class="cycle-item">
+            <div class="cdot" style="background:#FF5C35;"></div>
+            <span><strong>Day:</strong> PCM melts at 23–27°C → absorbs heat → interior stays cool</span>
+          </div>
+          <div class="cycle-item">
+            <div class="cdot" style="background:#3B82F6;"></div>
+            <span><strong>Night:</strong> PCM solidifies → releases stored heat → interior stays warm</span>
+          </div>
+          <div class="cycle-item">
+            <div class="cdot" style="background:#22C55E;"></div>
+            <span><strong>Indefinitely:</strong> 1,000+ cycles with &lt;2% thermal property degradation</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
+<!-- 03 CURRENT STATE -->
+<section id="current">
+  <div class="container">
+    <span class="sec-tag">03 — Current State Analysis</span>
+    <h2 class="sec-title">How PCM bricks<br>are made today.</h2>
+    <p class="sec-sub">Market overview, key manufacturers, current manufacturing process, and quantified mass and energy balances — with the inefficiencies clearly identified.</p>
+    <div class="reveal">
+      <div class="tab-bar">
+        <button class="tb active" onclick="showTab('mkt',this)">Market</button>
+        <button class="tb" onclick="showTab('proc',this)">Manufacturing</button>
+        <button class="tb" onclick="showTab('mass',this)">Mass Balance</button>
+        <button class="tb" onclick="showTab('nrg',this)">Energy Balance</button>
+        <button class="tb" onclick="showTab('env',this)">Env. Footprint</button>
+      </div>
 
-<!-- ── FOOTER CTA ── -->
-<div class="footer-cta">
-  <h2>PASSIVE. PERPETUAL.<br><span style="color:var(--accent)">PLANET-FIRST.</span></h2>
-  <p style="margin-top:1rem;">No electricity. No moving parts. Just thermodynamics doing what it does best.</p>
-  <p style="margin-top:2rem; font-family:'Space Mono',monospace; font-size:0.72rem; color:var(--muted);">CHE 201 Project · Spring 2026 · University of Illinois Chicago</p>
+      <!-- MARKET -->
+      <div class="tc active" id="tc-mkt">
+        <div class="mkt-stats">
+          <div class="mkt-s"><div class="mn">$3.5B</div><div class="ml">Global PCM Market (2024)</div></div>
+          <div class="mkt-s"><div class="mn">15%</div><div class="ml">Annual CAGR Growth Rate</div></div>
+          <div class="mkt-s"><div class="mn">40%</div><div class="ml">Share in construction applications</div></div>
+        </div>
+        <div class="co-grid">
+          <div class="co-card"><div class="co-name">BASF — Micronal®</div><div class="co-desc">Germany. World's largest chemical company. Produces micro-encapsulated PCM (Micronal) embedded in plaster, concrete, and board materials. Melt point: 23–26°C. Industry standard for building applications.</div></div>
+          <div class="co-card"><div class="co-name">Rubitherm Technologies</div><div class="co-desc">Germany. Specializes in RT-series paraffin PCMs with precisely engineered melt temperatures. Widely used in research and commercial projects. RT37 and RT42 are common brick-application grades.</div></div>
+          <div class="co-card"><div class="co-name">Microtek Laboratories</div><div class="co-desc">USA. Focuses on micro-encapsulation technology for textiles, building materials, and electronics cooling. Strong patent portfolio. Supplies to OEM building materials manufacturers.</div></div>
+          <div class="co-card"><div class="co-name">PureTemp (Entropy Solutions)</div><div class="co-desc">USA. Bio-based PCMs from plant oils — 100% renewable feedstock. Targets sustainable construction and cold-chain markets. Directly competitive with our bio-PCM design direction.</div></div>
+        </div>
+      </div>
+
+      <!-- MANUFACTURING -->
+      <div class="tc" id="tc-proc">
+        <p style="opacity:0.68;font-size:0.88rem;margin-bottom:22px;line-height:1.65;">Conventional brick manufacturing is energy-intensive. PCM is integrated via one of three methods — each with distinct cost, performance, and leakage trade-offs.</p>
+        <div class="flow">
+          <div class="fb"><div class="ft">Raw Materials</div><div class="fi">Clay / Shale<br>Water<br>Sand / Aggregates</div></div>
+          <div class="farr">→</div>
+          <div class="fb proc"><div class="ft">Mining & Mixing</div><div class="fi">Wet/dry process<br>Extrusion forming</div></div>
+          <div class="farr">→</div>
+          <div class="fb proc"><div class="ft">Kiln Firing</div><div class="fi">900–1200°C<br>3,500–4,500 MJ/t</div></div>
+          <div class="farr">→</div>
+          <div class="fb proc"><div class="ft">PCM Integration</div><div class="fi">Macro/micro-encaps.<br>or direct soak</div></div>
+          <div class="farr">→</div>
+          <div class="fb"><div class="ft">PCM Brick</div><div class="fi">QC check<br>Ready to ship</div></div>
+        </div>
+        <p style="opacity:0.42;font-size:0.76rem;margin-top:18px;line-height:1.5;">⚠ Direct impregnation carries leakage risk over thermal cycles. Micro-encapsulation (BASF approach) adds polymer shell cost but delivers 1,000+ cycle stability. Our design uses micro-encapsulation with bio-PCM.</p>
+      </div>
+
+      <!-- MASS BALANCE -->
+      <div class="tc" id="tc-mass">
+        <p style="opacity:0.68;font-size:0.88rem;margin-bottom:22px;line-height:1.65;">Mass balance per 1 tonne of finished PCM brick — conventional petroleum paraffin-based production. Approximately 8–12% material loss occurs during firing and encapsulation.</p>
+        <div class="flow">
+          <div class="fb" style="min-width:190px;"><div class="ft">INPUTS</div><div class="fi">~780 kg clay/shale<br>~120 kg paraffin PCM<br>~60 kg polymer shell<br>~200 L process water<br>~40 kg binders</div></div>
+          <div class="farr">→</div>
+          <div class="fb proc" style="min-width:170px;"><div class="ft">PROCESS</div><div class="fi">Mining → Mixing<br>Kiln 900–1200°C<br>Encapsulation<br>Quality inspection</div></div>
+          <div class="farr">→</div>
+          <div class="fb" style="min-width:190px;">
+            <div class="ft">OUTPUTS</div>
+            <div class="fi">
+              ~1,000 kg PCM brick ✓<br>
+              <span style="color:#FCA5A5;">~80–120 kg kiln waste</span><br>
+              <span style="color:#FCA5A5;">CO₂, NOx flue gas</span><br>
+              <span style="color:#FCA5A5;">Process wastewater</span>
+            </div>
+          </div>
+        </div>
+        <p style="opacity:0.42;font-size:0.76rem;margin-top:18px;line-height:1.5;">⚠ Paraffin wax is petroleum-derived — non-renewable feedstock subject to price volatility. Target for bio-based substitution in our sustainable design.</p>
+      </div>
+
+      <!-- ENERGY BALANCE -->
+      <div class="tc" id="tc-nrg">
+        <p style="opacity:0.68;font-size:0.88rem;margin-bottom:22px;line-height:1.65;">Energy balance per 1 tonne of brick — conventional process. No heat recovery systems installed. ~45% of input energy is lost as unrecovered waste heat.</p>
+        <div class="ebar-wrap">
+          <div class="ebar-row">
+            <div class="ebar-lbl">Total kiln energy input</div>
+            <div class="ebar-track"><div class="ebar-fill" style="width:100%;background:#3B82F6;">3,500–4,500 MJ/t</div></div>
+          </div>
+          <div class="ebar-row">
+            <div class="ebar-lbl">🔴 Flue gas heat loss (~30%)</div>
+            <div class="ebar-track"><div class="ebar-fill" style="width:30%;background:#EF4444;">~1,200 MJ/t wasted</div></div>
+          </div>
+          <div class="ebar-row">
+            <div class="ebar-lbl">🔴 Kiln wall radiation (~15%)</div>
+            <div class="ebar-track"><div class="ebar-fill" style="width:15%;background:#F97316;">~600 MJ/t wasted</div></div>
+          </div>
+          <div class="ebar-row">
+            <div class="ebar-lbl">Encapsulation process</div>
+            <div class="ebar-track"><div class="ebar-fill" style="width:8%;background:#8B5CF6;">200–400 MJ/t</div></div>
+          </div>
+          <div class="ebar-row">
+            <div class="ebar-lbl">✅ Useful brick formation energy</div>
+            <div class="ebar-track"><div class="ebar-fill" style="width:55%;background:#22C55E;">~55% useful efficiency</div></div>
+          </div>
+        </div>
+        <p style="opacity:0.42;font-size:0.76rem;margin-top:18px;line-height:1.5;">→ The flue gas loss (~1,200 MJ/t) is the primary target for heat integration in our sustainable redesign. Recovering 25–30% of this via a heat exchanger directly reduces external fuel consumption and CO₂ emissions.</p>
+      </div>
+
+      <!-- ENVIRONMENTAL FOOTPRINT -->
+      <div class="tc" id="tc-env">
+        <div class="co-grid">
+          <div class="co-card" style="border-left:3px solid #EF4444;"><div class="co-name" style="color:#FCA5A5;">🌫️ CO₂ Emissions</div><div class="co-desc">0.2–0.3 kg CO₂ per kg of conventional brick. High-temperature kiln combustion is the primary driver. Billions of bricks fired annually — construction is one of the largest industrial CO₂ sources globally.</div></div>
+          <div class="co-card" style="border-left:3px solid #F97316;"><div class="co-name" style="color:#FED7AA;">💧 Water Consumption</div><div class="co-desc">High water use in clay processing and wet mixing stages. Conventional plants have no water recycling loop. Process wastewater discharged with suspended clay solids and chemical additives.</div></div>
+          <div class="co-card" style="border-left:3px solid #8B5CF6;"><div class="co-name" style="color:#DDD6FE;">🛢️ Petroleum PCM</div><div class="co-desc">Paraffin wax is a petroleum distillate — non-renewable, price-volatile, and non-biodegradable. Polymer encapsulant shells also fossil-derived. End-of-life PCM recovery is not currently practiced.</div></div>
+          <div class="co-card" style="border-left:3px solid #EAB308;"><div class="co-name" style="color:#FDE68A;">⚠️ Design Constraints</div><div class="co-desc">PCM leakage risk in direct impregnation. 10–15% compressive strength reduction at high PCM content. Higher upfront cost vs. standard brick. Melt point must be precisely matched to local climate range.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 SUSTAINABLE DESIGN -->
+<section id="sustainable">
+  <div class="container">
+    <span class="sec-tag">04 — Sustainable Design</span>
+    <h2 class="sec-title">Four innovations.<br>One greener brick.</h2>
+    <p class="sec-sub">Our redesign targets the four biggest inefficiencies in current PCM brick production — replacing petroleum feedstocks, recovering waste heat, closing material loops, and cutting water waste.</p>
+    <div class="innov-grid reveal">
+      <div class="innov-card">
+        <div class="innov-ico">🌴</div>
+        <h3>Bio-Based PCM Replacement</h3>
+        <p>Replace paraffin wax with coconut fatty acids or palm-based stearic acid. Same latent heat range (150–220 kJ/kg), renewable feedstock, biodegradable at end-of-life. Melt point tunable by blending fatty acid ratios to precisely hit 22–28°C comfort range.</p>
+      </div>
+      <div class="innov-card">
+        <div class="innov-ico">♨️</div>
+        <h3>Kiln Waste Heat Recovery</h3>
+        <p>Install a heat exchanger on kiln flue gas exhaust to preheat incoming combustion air. Recovers ~25–30% of flue gas enthalpy — approximately 900–1,200 MJ/tonne saved per production run. Reduces external fuel input and CO₂ emissions proportionally.</p>
+      </div>
+      <div class="innov-card">
+        <div class="innov-ico">🏗️</div>
+        <h3>Recycled Aggregate Substitution</h3>
+        <p>Replace 20–30% of virgin clay input with fly ash (coal combustion byproduct) or recycled concrete aggregate. Fly ash has pozzolanic binding properties — maintains structural strength while diverting industrial waste from landfill and cutting raw material cost.</p>
+      </div>
+      <div class="innov-card">
+        <div class="innov-ico">💧</div>
+        <h3>Closed-Loop Water Recycling</h3>
+        <p>Install settling tanks and filtration to recycle process water in clay mixing and washing stages. Target: 40% reduction in freshwater consumption. Reduces wastewater discharge and lowers operating costs — especially valuable in arid manufacturing regions.</p>
+      </div>
+    </div>
+
+    <div class="thermo-box reveal">
+      <h3>Thermodynamic Justification</h3>
+      <p style="font-size:0.85rem;opacity:0.58;margin-top:4px;line-height:1.6;">Each design decision is grounded in quantifiable thermodynamic reasoning — improvements measurable in energy, mass, and entropy terms.</p>
+      <div class="eq-grid">
+        <div class="eq-card">
+          <div class="eq-f">Q = m × L<sub style="font-size:0.9rem">f</sub></div>
+          <div class="eq-d">Bio-PCMs with higher latent heat (up to 220 kJ/kg) store more energy per unit mass — reducing PCM loading needed per brick by ~10%, cutting material cost and weight.</div>
+        </div>
+        <div class="eq-card">
+          <div class="eq-f">ΔS = ΔH / T<sub style="font-size:0.9rem">m</sub></div>
+          <div class="eq-d">Entropy change during phase transition is quantifiable and directly linked to thermodynamic efficiency. Process integration reduces irreversibilities — lower entropy generation = higher efficiency.</div>
+        </div>
+        <div class="eq-card">
+          <div class="eq-f">η = Q<sub style="font-size:0.9rem">rec</sub> / Q<sub style="font-size:0.9rem">flue</sub></div>
+          <div class="eq-d">Heat exchanger recovery efficiency of ~25–30%. Recovering ~1,100 MJ/t from flue gas directly reduces external fuel input — measurable CO₂ reduction per tonne of brick produced.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ba-grid reveal">
+      <div class="ba-card bef">
+        <div class="ba-lbl">Conventional Design</div>
+        <ul class="ba-list">
+          <li>Petroleum paraffin PCM — non-renewable, price-volatile</li>
+          <li>No kiln heat recovery — ~45% energy wasted as flue gas</li>
+          <li>100% virgin clay — no recycled content</li>
+          <li>No water recycling loop</li>
+          <li>~0.28 kg CO₂ per kg brick produced</li>
+        </ul>
+      </div>
+      <div class="ba-card aft">
+        <div class="ba-lbl">Our Sustainable Design</div>
+        <ul class="ba-list">
+          <li>Bio-based PCM (coconut/stearic acid) — renewable feedstock</li>
+          <li>Heat exchanger on flue gas → 25–30% energy recovered</li>
+          <li>20–30% fly ash / recycled aggregate substitution</li>
+          <li>Closed-loop water recycling — 40% freshwater reduction</li>
+          <li>Target: ~0.15 kg CO₂ per kg brick (−46% vs. conventional)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 BRICK VISUAL COMPARISON -->
+<section id="brickvisual">
+  <div class="container">
+    <span class="sec-tag">05 — Visual Comparison</span>
+    <h2 class="sec-title">See the difference.</h2>
+    <p class="sec-sub">How heat moves through a conventional brick vs. a PCM brick — during the day and at night. Toggle to see both operating modes.</p>
+
+    <div style="text-align:center;margin-bottom:36px;">
+      <div class="dn-toggle">
+        <button class="dn-opt active" id="btn-day" onclick="setMode('day')">☀️ Daytime</button>
+        <button class="dn-opt" id="btn-night" onclick="setMode('night')">🌙 Nighttime</button>
+      </div>
+    </div>
+
+    <div class="brick-comp reveal">
+
+      <!-- CONVENTIONAL -->
+      <div class="bp conv">
+        <div class="bp-head">🧱 Conventional Brick</div>
+        <div class="bp-vis">
+          <svg id="svg-conv" width="260" height="180" viewBox="0 0 260 180">
+            <rect x="30" y="48" width="200" height="90" rx="6" fill="#C4A882" stroke="#A0845C" stroke-width="2"/>
+            <line x1="30" y1="93" x2="230" y2="93" stroke="#A0845C" stroke-width="1" opacity="0.35"/>
+            <line x1="80"  y1="48" x2="80"  y2="138" stroke="#A0845C" stroke-width="1" opacity="0.25"/>
+            <line x1="130" y1="48" x2="130" y2="138" stroke="#A0845C" stroke-width="1" opacity="0.25"/>
+            <line x1="180" y1="48" x2="180" y2="138" stroke="#A0845C" stroke-width="1" opacity="0.25"/>
+            <g id="conv-arrows">
+              <g class="heat-w"><line x1="5"  y1="72" x2="28" y2="72" stroke="#FF5C35" stroke-width="2.5"/><polygon points="28,67 38,72 28,77" fill="#FF5C35"/></g>
+              <g class="heat-w"><line x1="5"  y1="93" x2="28" y2="93" stroke="#FF5C35" stroke-width="2.5"/><polygon points="28,88 38,93 28,98" fill="#FF5C35"/></g>
+              <g class="heat-w"><line x1="5"  y1="114" x2="28" y2="114" stroke="#FF5C35" stroke-width="2.5"/><polygon points="28,109 38,114 28,119" fill="#FF5C35"/></g>
+              <g class="heat-w"><line x1="232" y1="72" x2="255" y2="72" stroke="#FF5C35" stroke-width="2.5"/><polygon points="255,67 265,72 255,77" fill="#FF5C35"/></g>
+              <g class="heat-w"><line x1="232" y1="93" x2="255" y2="93" stroke="#FF5C35" stroke-width="2.5"/><polygon points="255,88 265,93 255,98" fill="#FF5C35"/></g>
+              <g class="heat-w"><line x1="232" y1="114" x2="255" y2="114" stroke="#FF5C35" stroke-width="2.5"/><polygon points="255,109 265,114 255,119" fill="#FF5C35"/></g>
+            </g>
+            <text x="2"   y="42" font-family="Crimson Pro,Georgia,serif" font-size="11" fill="#FF5C35" font-weight="bold">38°C</text>
+            <text x="228" y="42" font-family="Crimson Pro,Georgia,serif" font-size="11" fill="#FF5C35" font-weight="bold" id="conv-out-lbl">38°C</text>
+            <text x="60"  y="170" font-family="Crimson Pro,Georgia,serif" font-size="9.5" fill="#94A3B8">Full heat transmission — no buffer</text>
+          </svg>
+          <p>Heat passes straight through.<br>Indoor temperature = outdoor.</p>
+        </div>
+        <div class="bp-metrics">
+          <div class="metric"><div class="metric-v" id="conv-t">38°C</div><div class="metric-k">Indoor Peak Temp</div></div>
+          <div class="metric"><div class="metric-v">100%</div><div class="metric-k">Heat Transfer Rate</div></div>
+          <div class="metric"><div class="metric-v">None</div><div class="metric-k">Thermal Buffer</div></div>
+          <div class="metric"><div class="metric-v">Full</div><div class="metric-k">HVAC Required</div></div>
+        </div>
+      </div>
+
+      <!-- PCM BRICK -->
+      <div class="bp pcm">
+        <div class="bp-head">✨ PCM Smart Brick</div>
+        <div class="bp-vis">
+          <svg id="svg-pcm" width="260" height="180" viewBox="0 0 260 180">
+            <rect x="30" y="48" width="200" height="90" rx="6" fill="#C4A882" stroke="#A0845C" stroke-width="2"/>
+            <!-- PCM cavities -->
+            <ellipse class="pcm-cell" cx="78"  cy="76"  rx="19" ry="14" fill="#93C5FD" stroke="#60A5FA" stroke-width="1.5"/>
+            <ellipse class="pcm-cell" cx="130" cy="76"  rx="19" ry="14" fill="#93C5FD" stroke="#60A5FA" stroke-width="1.5"/>
+            <ellipse class="pcm-cell" cx="182" cy="76"  rx="19" ry="14" fill="#93C5FD" stroke="#60A5FA" stroke-width="1.5"/>
+            <ellipse class="pcm-cell" cx="104" cy="112" rx="19" ry="14" fill="#93C5FD" stroke="#60A5FA" stroke-width="1.5"/>
+            <ellipse class="pcm-cell" cx="156" cy="112" rx="19" ry="14" fill="#93C5FD" stroke="#60A5FA" stroke-width="1.5"/>
+            <text x="68"  y="80"  font-family="Crimson Pro,Georgia,serif" font-size="8" fill="#1E40AF" font-weight="bold">PCM</text>
+            <text x="120" y="80"  font-family="Crimson Pro,Georgia,serif" font-size="8" fill="#1E40AF" font-weight="bold">PCM</text>
+            <text x="172" y="80"  font-family="Crimson Pro,Georgia,serif" font-size="8" fill="#1E40AF" font-weight="bold">PCM</text>
+            <text x="94"  y="116" font-family="Crimson Pro,Georgia,serif" font-size="8" fill="#1E40AF" font-weight="bold">PCM</text>
+            <text x="146" y="116" font-family="Crimson Pro,Georgia,serif" font-size="8" fill="#1E40AF" font-weight="bold">PCM</text>
+            <!-- Arrows entering -->
+            <g class="heat-w"><line x1="5"  y1="72"  x2="28" y2="72"  stroke="#FF5C35" stroke-width="2.5"/><polygon points="28,67 38,72 28,77"  fill="#FF5C35"/></g>
+            <g class="heat-w"><line x1="5"  y1="93"  x2="28" y2="93"  stroke="#FF5C35" stroke-width="2.5"/><polygon points="28,88 38,93 28,98"  fill="#FF5C35"/></g>
+            <g class="heat-w"><line x1="5"  y1="114" x2="28" y2="114" stroke="#FF5C35" stroke-width="2.5"/><polygon points="28,109 38,114 28,119" fill="#FF5C35"/></g>
+            <!-- Faded minimal exit arrow -->
+            <g style="opacity:0.2;">
+              <line x1="232" y1="90" x2="248" y2="90" stroke="#FF5C35" stroke-width="1.5"/>
+              <polygon points="248,86 256,90 248,94" fill="#FF5C35"/>
+            </g>
+            <text x="2"   y="42" font-family="Crimson Pro,Georgia,serif" font-size="11" fill="#FF5C35" font-weight="bold">38°C</text>
+            <text x="224" y="42" font-family="Crimson Pro,Georgia,serif" font-size="11" fill="#22C55E" font-weight="bold" id="pcm-out-lbl">28°C</text>
+            <text x="60"  y="170" font-family="Crimson Pro,Georgia,serif" font-size="9.5" fill="#2563EB">Heat absorbed by PCM cavities</text>
+          </svg>
+          <p>PCM absorbs heat energy during melting.<br>Indoor stays up to 9.5°C cooler.</p>
+        </div>
+        <div class="bp-metrics">
+          <div class="metric"><div class="metric-v" id="pcm-t">28°C</div><div class="metric-k">Indoor Peak Temp</div></div>
+          <div class="metric"><div class="metric-v">40%</div><div class="metric-k">Heat Transfer Rate</div></div>
+          <div class="metric"><div class="metric-v">9.5°C</div><div class="metric-k">Temp Buffered</div></div>
+          <div class="metric"><div class="metric-v">Passive</div><div class="metric-k">No HVAC Needed</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DESIGN EVALUATION -->
+<section id="evaluation">
+  <div class="container">
+    <span class="sec-tag">06 — Design Evaluation</span>
+    <h2 class="sec-title">Quantified.<br>Verified. Worth it.</h2>
+    <p class="sec-sub">Life cycle analysis, improved mass and energy balances, economic evaluation, and market potential — all grounded in peer-reviewed data and thermodynamic calculations.</p>
+    <div class="eval-grid reveal">
+
+      <div class="ev-card">
+        <h3>🌍 Life Cycle Analysis (Cradle-to-Gate)</h3>
+        <p style="font-size:0.8rem;opacity:0.58;margin-bottom:18px;line-height:1.55;">Comparing conventional brick vs. our sustainable PCM brick design across three key LCA impact categories:</p>
+        <div class="lca-bars">
+          <div class="lca-pair">
+            <div class="lca-head">Global Warming Potential (CO₂eq per kg brick)</div>
+            <div class="lca-track"><div class="lca-fill cv" style="width:100%;"></div></div>
+            <div class="lca-val">Conventional: 0.28 kg CO₂/kg</div>
+            <div class="lca-track" style="margin-top:4px;"><div class="lca-fill pd" style="width:54%;"></div></div>
+            <div class="lca-val">Our Design: ~0.15 kg CO₂/kg &nbsp;<strong style="color:#4ADE80;">−46%</strong></div>
+          </div>
+          <div class="lca-pair">
+            <div class="lca-head">Energy Consumption (MJ per tonne)</div>
+            <div class="lca-track"><div class="lca-fill cv" style="width:100%;"></div></div>
+            <div class="lca-val">Conventional: 3,500–4,500 MJ/t</div>
+            <div class="lca-track" style="margin-top:4px;"><div class="lca-fill pd" style="width:72%;"></div></div>
+            <div class="lca-val">Our Design: ~2,600–3,200 MJ/t &nbsp;<strong style="color:#4ADE80;">−28%</strong></div>
+          </div>
+          <div class="lca-pair">
+            <div class="lca-head">Freshwater Use (L per tonne)</div>
+            <div class="lca-track"><div class="lca-fill cv" style="width:100%;"></div></div>
+            <div class="lca-val">Conventional: ~200 L/t (no recycling)</div>
+            <div class="lca-track" style="margin-top:4px;"><div class="lca-fill pd" style="width:60%;"></div></div>
+            <div class="lca-val">Our Design: ~120 L/t &nbsp;<strong style="color:#4ADE80;">−40%</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ev-card">
+        <h3>💰 Economic Evaluation</h3>
+        <table class="cost-tbl">
+          <tr><th>Item</th><th>Conventional</th><th>Our Design</th></tr>
+          <tr><td>PCM raw material</td><td>~$2.50/kg (paraffin)</td><td class="sav">~$2.20/kg (bio-PCM)</td></tr>
+          <tr><td>Kiln energy savings</td><td>—</td><td class="sav">$8–12 / tonne brick</td></tr>
+          <tr><td>Water cost savings</td><td>—</td><td class="sav">$2–4 / tonne brick</td></tr>
+          <tr><td>Heat recovery capex</td><td>—</td><td style="color:#FBBF24;">~$150K–250K one-time</td></tr>
+          <tr><td>Payback period</td><td>—</td><td class="sav">~4–7 years</td></tr>
+          <tr><td>Green building premium</td><td>Baseline</td><td class="sav">+5–15% market price</td></tr>
+        </table>
+        <div style="margin-top:18px;padding:14px;background:rgba(251,191,36,0.08);border-radius:10px;border:1px solid rgba(251,191,36,0.18);">
+          <div style="font-family:'Playfair Display',serif;font-weight:800;font-size:1.7rem;color:var(--yellow);">$3.5B → $10B+</div>
+          <div style="font-size:0.76rem;opacity:0.55;margin-top:4px;">PCM construction market projection by 2030 at 15% CAGR — driven by green building codes and climate adaptation mandates.</div>
+        </div>
+      </div>
+
+      <div class="ev-card">
+        <h3>📊 Improved Balance Summary</h3>
+        <div class="impr-grid">
+          <div class="impr-item"><div class="il">Recycled aggregate substitution</div><div class="iv">20–30%</div></div>
+          <div class="impr-item"><div class="il">Freshwater input reduction</div><div class="iv">−40%</div></div>
+          <div class="impr-item"><div class="il">Material waste target</div><div class="iv">&lt;5% loss</div></div>
+          <div class="impr-item"><div class="il">Kiln energy saved (heat recovery)</div><div class="iv">900–1,200 MJ/t</div></div>
+          <div class="impr-item"><div class="il">Net energy consumption reduction</div><div class="iv">25–30%</div></div>
+          <div class="impr-item"><div class="il">Building HVAC savings (use phase)</div><div class="iv">~30%/yr</div></div>
+        </div>
+      </div>
+
+      <div class="ev-card">
+        <h3>🌐 Market Potential</h3>
+        <p style="font-size:0.8rem;opacity:0.58;margin-bottom:14px;line-height:1.55;">Primary markets matched to PCM brick's strongest value propositions:</p>
+        <div class="mkt-tags">
+          <div class="mkt-tag">🏜️ Hot/Arid Climates<br><small style="opacity:0.5;">Middle East · South Asia · N. Africa</small></div>
+          <div class="mkt-tag">🏘️ Affordable Housing<br><small style="opacity:0.5;">Passive cooling, no HVAC cost</small></div>
+          <div class="mkt-tag">🏫 Schools & Clinics<br><small style="opacity:0.5;">Off-grid / energy-limited settings</small></div>
+          <div class="mkt-tag">🏆 LEED / BREEAM<br><small style="opacity:0.5;">Green certification projects</small></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 07 TECHNICAL CHALLENGES -->
+<section id="challenges">
+  <div class="container">
+    <span class="sec-tag">07 — Technical Challenges</span>
+    <h2 class="sec-title">Honest about<br>the hard parts.</h2>
+    <p class="sec-sub">Every innovative design has real engineering challenges. Here are the four key barriers to PCM brick adoption — and how our design addresses each one.</p>
+    <div class="ch-grid reveal">
+      <div class="ch-card">
+        <div class="ch-ico">💧</div>
+        <h3>PCM Leakage Risk</h3>
+        <p class="ch-prob">Direct impregnation allows molten PCM to migrate and leak over repeated thermal cycles — especially at elevated temperatures. Structural integrity and thermal performance both degrade as PCM escapes the brick matrix.</p>
+        <div class="ch-sol">Micro-encapsulation in polymer shells (BASF Micronal approach) seals each PCM droplet. Zero leakage recorded across 1,000+ thermal cycles in peer-reviewed testing.</div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-ico">🏗️</div>
+        <h3>Reduced Compressive Strength</h3>
+        <p class="ch-prob">Adding PCM cavities reduces effective cross-sectional area. At 20% PCM loading by weight, compressive strength drops by 10–15% vs. standard brick — a concern for load-bearing wall applications.</p>
+        <div class="ch-sol">Fly ash substitution compensates via pozzolanic reactions. Cavity geometry optimization in SolidWorks minimizes strength loss while maximizing PCM volume per brick.</div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-ico">💸</div>
+        <h3>Higher Upfront Cost</h3>
+        <p class="ch-prob">PCM bricks currently cost 1.4–1.8× more than standard bricks. This is a significant barrier in affordable housing markets and developing regions where construction budgets are severely constrained.</p>
+        <div class="ch-sol">Payback period of 3–7 years via HVAC savings. At scale, bio-PCM sourcing and heat recovery reduce manufacturing cost. Green building incentives and carbon credits offset the upfront premium.</div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-ico">🌡️</div>
+        <h3>Low Thermal Conductivity</h3>
+        <p class="ch-prob">Paraffin and bio-based PCMs have low thermal conductivity (~0.2 W/m·K) — heat transfer into and out of the PCM is slow, reducing charge/discharge rate and limiting performance in extreme climates.</p>
+        <div class="ch-sol">Expanded graphite or metal foam inserts inside PCM cavities boost effective thermal conductivity by 5–10×. Trade-off against cost and mass is optimized for target climate zone.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 PROTOTYPE — 3D INTERACTIVE VIEWER -->
+<section id="prototype" style="background:#0A1A0F;padding:100px 0;">
+
+<style>
+/* ── 3D Viewer styles — namespaced bv- ── */
+.bv-wrap{max-width:1080px;margin:0 auto;padding:0 40px;}
+.bv-header{text-align:center;margin-bottom:56px;}
+.bv-tag{display:inline-block;font-family:'Cinzel',serif;font-size:0.65rem;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:#4ADE80;background:rgba(34,197,94,0.14);padding:5px 16px;border-radius:100px;margin-bottom:20px;}
+.bv-h2{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:800;color:#fff;line-height:1.08;margin-bottom:14px;}
+.bv-h2 em{color:#FF5C35;font-style:normal;}
+.bv-sub{font-family:'Crimson Pro',serif;font-size:1.1rem;font-weight:300;font-style:italic;color:rgba(255,255,255,0.45);}
+.bv-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:40px;}
+.bv-panel{position:relative;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.09);border-radius:20px;}
+.bv-ph{padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.22);border-radius:20px 20px 0 0;}
+.bv-pt{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;}
+.bv-badge{font-family:'Cinzel',serif;font-size:0.58rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:100px;}
+.bv-bc{background:rgba(100,116,139,0.2);color:#94A3B8;}
+.bv-bp{background:rgba(255,92,53,0.18);color:#FF5C35;}
+.bv-cw{position:relative;overflow:hidden;}
+.bv-cw canvas{display:block;width:100%!important;cursor:grab;}
+.bv-cw canvas:active{cursor:grabbing;}
+.bv-ripple{position:absolute;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,0.88);pointer-events:none;z-index:20;transform:translate(-50%,-50%) scale(1);animation:bvRpl 0.68s ease-out forwards;}
+@keyframes bvRpl{0%{transform:translate(-50%,-50%) scale(1);opacity:1;}100%{transform:translate(-50%,-50%) scale(8);opacity:0;}}
+.bv-popup{position:absolute;bottom:50px;left:50%;transform:translateX(-50%) translateY(14px);background:rgba(5,10,22,0.97);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:20px 22px 18px;min-width:248px;max-width:calc(100% - 28px);opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;z-index:40;}
+.bv-popup.bv-vis{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.bv-popup::before{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:10px solid rgba(255,255,255,0.12);}
+.bv-popup::after{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:8px solid rgba(5,10,22,0.97);}
+.bv-pclose{position:absolute;top:12px;right:16px;color:rgba(255,255,255,0.3);cursor:pointer;font-size:0.88rem;font-family:sans-serif;transition:color .2s;}
+.bv-pclose:hover{color:rgba(255,255,255,0.85);}
+.bv-arrows{display:flex;justify-content:center;gap:10px;margin-bottom:14px;}
+.bv-arr{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:10px solid #60A5FA;animation:bvAup 1.5s ease-in-out infinite;}
+.bv-arr:nth-child(2){animation-delay:.18s;}.bv-arr:nth-child(3){animation-delay:.36s;}
+@keyframes bvAup{0%,100%{transform:translateY(0);opacity:.45;}50%{transform:translateY(-6px);opacity:1;}}
+.bv-ptitle{font-family:'Playfair Display',serif;font-size:1.02rem;font-weight:800;margin-bottom:14px;padding-right:22px;line-height:1.25;}
+.bv-pstats{display:flex;flex-direction:column;gap:7px;}
+.bv-prow{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,0.055);}
+.bv-prow:last-child{border-bottom:none;padding-bottom:0;}
+.bv-plbl{font-family:'Crimson Pro',serif;font-size:0.88rem;font-weight:300;color:rgba(255,255,255,0.5);}
+.bv-pval{font-family:'Playfair Display',serif;font-size:0.92rem;font-weight:700;font-style:italic;white-space:nowrap;}
+.bv-hint{text-align:center;padding:10px 16px;font-family:'Cinzel',serif;font-size:0.54rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.2);border-top:1px solid rgba(255,255,255,0.05);border-radius:0 0 20px 20px;}
+.bv-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 30px;}
+.bv-leg{display:flex;align-items:center;gap:9px;font-family:'Crimson Pro',serif;font-size:0.9rem;font-weight:300;color:rgba(255,255,255,0.5);}
+.bv-ld{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+@media(max-width:660px){.bv-grid{grid-template-columns:1fr;}.bv-wrap{padding:0 20px;}}
+</style>
+
+<div class="bv-wrap">
+  <div class="bv-header">
+    <div class="bv-tag">08 &#x2014; 3D Interactive Model</div>
+    <h2 class="bv-h2">Side-by-Side <em>Brick</em> Comparison</h2>
+    <p class="bv-sub">Drag each brick freely &nbsp;·&nbsp; Click any surface to reveal its properties</p>
+  </div>
+
+  <div class="bv-grid">
+    <div class="bv-panel">
+      <div class="bv-ph">
+        <span class="bv-pt">Conventional Brick</span>
+        <span class="bv-badge bv-bc">Standard</span>
+      </div>
+      <div class="bv-cw" id="bv-conv-cw">
+        <canvas id="bv-conv-canvas" height="320"></canvas>
+      </div>
+      <div class="bv-popup" id="bv-conv-popup">
+        <span class="bv-pclose" onclick="bvClose('conv')">&#x2715;</span>
+        <div class="bv-arrows" id="bv-conv-arrows">
+          <div class="bv-arr"></div><div class="bv-arr"></div><div class="bv-arr"></div>
+        </div>
+        <div class="bv-ptitle" id="bv-conv-title"></div>
+        <div class="bv-pstats" id="bv-conv-stats"></div>
+      </div>
+      <div class="bv-hint">Drag to rotate &nbsp;·&nbsp; Click to explore</div>
+    </div>
+
+    <div class="bv-panel">
+      <div class="bv-ph">
+        <span class="bv-pt">PCM Smart Brick</span>
+        <span class="bv-badge bv-bp">Sustainable</span>
+      </div>
+      <div class="bv-cw" id="bv-pcm-cw">
+        <canvas id="bv-pcm-canvas" height="320"></canvas>
+      </div>
+      <div class="bv-popup" id="bv-pcm-popup">
+        <span class="bv-pclose" onclick="bvClose('pcm')">&#x2715;</span>
+        <div class="bv-arrows" id="bv-pcm-arrows">
+          <div class="bv-arr"></div><div class="bv-arr"></div><div class="bv-arr"></div>
+        </div>
+        <div class="bv-ptitle" id="bv-pcm-title"></div>
+        <div class="bv-pstats" id="bv-pcm-stats"></div>
+      </div>
+      <div class="bv-hint">Drag to rotate &nbsp;·&nbsp; Click shell or cavity</div>
+    </div>
+  </div>
+
+  <div class="bv-legend">
+    <div class="bv-leg"><div class="bv-ld" style="background:#C4705A"></div>Clay matrix</div>
+    <div class="bv-leg"><div class="bv-ld" style="background:#3B82F6"></div>PCM micro-cavities</div>
+    <div class="bv-leg"><div class="bv-ld" style="background:rgba(190,215,255,0.4);border:1px solid rgba(255,255,255,0.25)"></div>Polymer encapsulation</div>
+    <div class="bv-leg"><div class="bv-ld" style="background:#FBBF24"></div>Active heat absorption</div>
+  </div>
 </div>
 
 <script>
-// ── PARTICLES ──
-const container = document.getElementById('particles');
-const colors = ['rgba(255,107,43,', 'rgba(43,212,255,', 'rgba(255,159,43,'];
-for (let i = 0; i < 30; i++) {
-  const p = document.createElement('div');
-  p.className = 'particle';
-  const size = Math.random() * 4 + 2;
-  const color = colors[Math.floor(Math.random() * colors.length)];
-  p.style.cssText = `
-    width:${size}px; height:${size}px;
-    left:${Math.random()*100}%;
-    top:${Math.random()*100}%;
-    background:${color}0.7);
-    animation-duration:${8 + Math.random()*12}s;
-    animation-delay:${Math.random()*8}s;
-  `;
-  container.appendChild(p);
-}
-
-// ── INTERSECTION OBSERVER ──
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-
-    // Cycle steps
-    if (entry.target.id === 'cycle') {
-      document.querySelectorAll('.cycle-step').forEach((el, i) => {
-        setTimeout(() => el.classList.add('visible'), i * 180);
-      });
+(function(){
+  if(typeof THREE==='undefined'){console.error('Three.js not loaded');return;}
+  function mkTex(h){
+    var c=document.createElement('canvas');c.width=512;c.height=512;
+    var ctx=c.getContext('2d');ctx.fillStyle=h;ctx.fillRect(0,0,512,512);
+    for(var i=0;i<9000;i++){
+      var px=Math.random()*512,py=Math.random()*512,r=Math.random()*2.8,v=(Math.random()-.5)*58;
+      ctx.globalAlpha=Math.random()*.17;
+      ctx.fillStyle='rgb('+(138+v|0)+','+(58+v|0)+','+(30+v|0)+')';
+      ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);ctx.fill();
     }
-
-    // Stats
-    if (entry.target.id === 'stats') {
-      document.querySelectorAll('.stat-card').forEach((el, i) => {
-        setTimeout(() => {
-          el.classList.add('visible');
-          const counter = el.querySelector('.count-up');
-          if (counter) animateCount(counter);
-        }, i * 120);
-      });
+    ctx.globalAlpha=1;
+    for(var ly=0;ly<512;ly+=24+Math.random()*20){
+      ctx.strokeStyle='rgba(0,0,0,0.065)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(0,ly);ctx.lineTo(512,ly);ctx.stroke();
     }
-
-    // Use cards
-    if (entry.target.id === 'usecards') {
-      document.querySelectorAll('.use-card').forEach((el, i) => {
-        setTimeout(() => el.classList.add('visible'), i * 100);
-      });
-    }
-
-    // Research
-    if (entry.target.id === 'research') {
-      document.querySelectorAll('.research-card').forEach((el, i) => {
-        setTimeout(() => el.classList.add('visible'), i * 140);
-      });
-    }
-
-    // Meters
-    if (entry.target.id === 'meters') {
-      setTimeout(() => {
-        document.getElementById('bar1').style.width = '95%';
-        document.getElementById('bar2').style.width = '55%';
-      }, 400);
-    }
-
-    observer.unobserve(entry.target);
-  });
-}, { threshold: 0.2 });
-
-['cycle','stats','usecards','research','meters'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) observer.observe(el);
-});
-
-// ── COUNT UP ──
-function animateCount(el) {
-  const target = parseFloat(el.dataset.target);
-  const duration = 1800;
-  const start = performance.now();
-  function step(now) {
-    const progress = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(ease * target);
-    if (progress < 1) requestAnimationFrame(step);
-    else el.textContent = target;
+    return new THREE.CanvasTexture(c);
   }
-  requestAnimationFrame(step);
+  function mkScene(id){
+    var cv=document.getElementById(id);
+    var W=Math.max(cv.parentElement.clientWidth||380,260),H=320;
+    var rend=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    rend.setSize(W,H);rend.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    rend.shadowMap.enabled=true;rend.shadowMap.type=THREE.PCFSoftShadowMap;
+    var sc=new THREE.Scene();
+    var cam=new THREE.PerspectiveCamera(42,W/H,.1,50);
+    cam.position.set(0,1.2,4.7);cam.lookAt(0,0,0);
+    sc.add(new THREE.AmbientLight(0xffffff,.46));
+    var kl=new THREE.DirectionalLight(0xfff3e0,1.4);kl.position.set(3.5,5.5,4);kl.castShadow=true;
+    kl.shadow.mapSize.width=kl.shadow.mapSize.height=1024;sc.add(kl);
+    var rl=new THREE.PointLight(0x3388ff,.5,22);rl.position.set(-4,1.5,-3);sc.add(rl);
+    var fl=new THREE.PointLight(0xffaa55,.22,18);fl.position.set(2,-2,3);sc.add(fl);
+    var sm=new THREE.Mesh(new THREE.PlaneGeometry(4.2,2.8),new THREE.MeshBasicMaterial({color:0,transparent:true,opacity:.28}));
+    sm.rotation.x=-Math.PI/2;sm.position.y=-.56;sc.add(sm);
+    return{cv:cv,rend:rend,sc:sc,cam:cam};
+  }
+  var DC={title:'Standard Clay Brick',accent:'#94A3B8',stats:[
+    {l:'Heat Transfer',v:'100%'},{l:'Thermal Buffer',v:'None'},
+    {l:'Indoor Peak Temp',v:'= Outdoor'},{l:'CO\u2082 per kg',v:'0.28 kg'},
+    {l:'Energy Storage',v:'Sensible only'},{l:'HVAC Required',v:'Full system'}
+  ]};
+  var DS={title:'Bio-Aggregate Clay Shell',accent:'#FF5C35',stats:[
+    {l:'Fly Ash Content',v:'20\u201330%'},{l:'Compressive Str.',v:'85\u201395%'},
+    {l:'CO\u2082 Target',v:'\u223c0.15 kg/kg'},{l:'Water Reduction',v:'40%'},
+    {l:'Feedstock',v:'Renewable'},{l:'vs. Conventional',v:'\u221246% CO\u2082'}
+  ]};
+  var DP={title:'PCM Micro-Cavity',accent:'#60A5FA',stats:[
+    {l:'Formula',v:'Q = m \u00d7 Lf'},{l:'Latent Heat',v:'200 kJ/kg'},
+    {l:'Phase Change',v:'23\u201327\u00b0C'},{l:'Thermal Cycles',v:'1,000+'},
+    {l:'Property Loss',v:'< 2%'},{l:'Peak Cooling',v:'\u22129.5\u00b0C'}
+  ]};
+  function bConv(sc){
+    var g=new THREE.Group(),cl=[],tx=mkTex('#C4705A');
+    var b=new THREE.Mesh(new THREE.BoxGeometry(2.4,.88,1.18),
+      new THREE.MeshStandardMaterial({map:tx,color:0xC4705A,roughness:.87,metalness:.02}));
+    b.castShadow=true;b.userData=DC;g.add(b);cl.push(b);
+    [-0.33,0,0.33].forEach(function(z){
+      var s=new THREE.Mesh(new THREE.BoxGeometry(2.26,.022,.04),
+        new THREE.MeshStandardMaterial({color:0xA86050,roughness:.93}));
+      s.position.set(0,.452,z);g.add(s);
+    });
+    var eg=new THREE.BoxGeometry(2.42,.058,1.2),em=new THREE.MeshStandardMaterial({color:0xB06048,roughness:.94});
+    [.432,-.432].forEach(function(y){var e=new THREE.Mesh(eg,em);e.position.y=y;g.add(e);});
+    sc.add(g);return{g:g,cl:cl};
+  }
+  function bPCM(sc){
+    var g=new THREE.Group(),cl=[],pm=[],tx=mkTex('#B86850');
+    var sh=new THREE.Mesh(new THREE.BoxGeometry(2.4,.88,1.18),
+      new THREE.MeshStandardMaterial({map:tx,color:0xC47060,roughness:.84,metalness:.02,transparent:true,opacity:.42}));
+    sh.castShadow=true;sh.userData=DS;g.add(sh);cl.push(sh);
+    [-0.72,0,0.72].forEach(function(x){
+      [-0.27,0.27].forEach(function(z){
+        var py=new THREE.Mesh(new THREE.SphereGeometry(.215,18,13),
+          new THREE.MeshStandardMaterial({color:0xBBCCEE,roughness:.28,metalness:.14,transparent:true,opacity:.18}));
+        py.scale.set(1.58,.94,1);py.position.set(x,0,z);g.add(py);
+        var p=new THREE.Mesh(new THREE.SphereGeometry(.178,18,13),
+          new THREE.MeshStandardMaterial({color:0x3B82F6,emissive:0x1E3A8A,emissiveIntensity:.28,roughness:.14,metalness:.18,transparent:true,opacity:.93}));
+        p.scale.set(1.58,.94,1);p.position.set(x,0,z);
+        p.userData=DP;g.add(p);cl.push(p);pm.push(p);
+      });
+    });
+    sc.add(g);return{g:g,cl:cl,pm:pm};
+  }
+  function addI(s,pfx){
+    var cv=s.cv,g=s.g,cam=s.cam,cl=s.cl;
+    var dr=false,dt=0,pv={x:0,y:0},ao=true;
+    var ray=new THREE.Raycaster(),ms=new THREE.Vector2();
+    cv.addEventListener('mousedown',function(e){dr=true;dt=0;pv={x:e.clientX,y:e.clientY};ao=false;});
+    cv.addEventListener('mousemove',function(e){
+      if(!dr)return;
+      var dx=e.clientX-pv.x,dy=e.clientY-pv.y;dt+=Math.abs(dx)+Math.abs(dy);
+      g.rotation.y+=dx*.013;g.rotation.x=Math.max(-1.1,Math.min(1.1,g.rotation.x+dy*.013));
+      pv={x:e.clientX,y:e.clientY};
+    });
+    cv.addEventListener('mouseup',function(e){
+      var wd=dt>5;dr=false;if(!wd)doCl(e);setTimeout(function(){ao=true;},2400);
+    });
+    cv.addEventListener('mouseleave',function(){dr=false;setTimeout(function(){ao=true;},700);});
+    var tp=null;
+    cv.addEventListener('touchstart',function(e){tp={x:e.touches[0].clientX,y:e.touches[0].clientY};ao=false;},{passive:true});
+    cv.addEventListener('touchmove',function(e){
+      if(!tp)return;
+      var dx=e.touches[0].clientX-tp.x,dy=e.touches[0].clientY-tp.y;
+      g.rotation.y+=dx*.013;g.rotation.x=Math.max(-1.1,Math.min(1.1,g.rotation.x+dy*.013));
+      tp={x:e.touches[0].clientX,y:e.touches[0].clientY};e.preventDefault();
+    },{passive:false});
+    cv.addEventListener('touchend',function(){setTimeout(function(){ao=true;},2200);});
+    function doCl(e){
+      var rc=cv.getBoundingClientRect(),cx=e.clientX-rc.left,cy=e.clientY-rc.top;
+      ms.x=(cx/rc.width)*2-1;ms.y=-(cy/rc.height)*2+1;
+      ray.setFromCamera(ms,cam);
+      var hi=ray.intersectObjects(cl,false);
+      spR(cv.parentElement,cx,cy);
+      if(hi.length>0&&hi[0].object.userData&&hi[0].object.userData.title){
+        showP(pfx,hi[0].object.userData);pulse(hi[0].object);
+      }else{bvClose(pfx);}
+    }
+    s.ao=function(){return ao;};
+  }
+  function spR(w,x,y){
+    var el=document.createElement('div');el.className='bv-ripple';
+    el.style.left=x+'px';el.style.top=y+'px';w.appendChild(el);
+    el.addEventListener('animationend',function(){if(el.parentNode)el.parentNode.removeChild(el);});
+  }
+  function pulse(m){
+    if(!m.material||m.material.emissiveIntensity===undefined)return;
+    var o=m.material.emissiveIntensity,t=0;
+    var iv=setInterval(function(){
+      if(!m.material){clearInterval(iv);return;}
+      t+=.1;m.material.emissiveIntensity=o+Math.sin(t)*.45;
+      if(t>Math.PI*4){clearInterval(iv);if(m.material)m.material.emissiveIntensity=o;}
+    },28);
+  }
+  window.bvClose=function(pfx){
+    var p=document.getElementById('bv-'+pfx+'-popup');
+    if(p)p.classList.remove('bv-vis');
+  };
+  function showP(pfx,d){
+    var p=document.getElementById('bv-'+pfx+'-popup');
+    var ti=document.getElementById('bv-'+pfx+'-title');
+    var st=document.getElementById('bv-'+pfx+'-stats');
+    var ar=document.getElementById('bv-'+pfx+'-arrows');
+    if(!p||!ti||!st)return;
+    ti.textContent=d.title;ti.style.color=d.accent||'#fff';
+    if(ar)ar.querySelectorAll('.bv-arr').forEach(function(a){a.style.borderBottomColor=d.accent||'#60A5FA';});
+    st.innerHTML=d.stats.map(function(s){
+      return '<div class="bv-prow"><span class="bv-plbl">'+s.l+'</span>'+
+        '<span class="bv-pval" style="color:'+d.accent+'">'+s.v+'</span></div>';
+    }).join('');
+    p.classList.add('bv-vis');
+  }
+  function boot(){
+    var C=mkScene('bv-conv-canvas');
+    var cB=bConv(C.sc);C.g=cB.g;C.cl=cB.cl;
+    C.g.rotation.set(.3,.48,0);addI(C,'conv');
+    var P=mkScene('bv-pcm-canvas');
+    var pB=bPCM(P.sc);P.g=pB.g;P.cl=pB.cl;
+    P.g.rotation.set(.3,-.48,0);addI(P,'pcm');
+    var T=0;
+    (function loop(){
+      requestAnimationFrame(loop);T+=.018;
+      if(C.ao())C.g.rotation.y+=.005;
+      if(P.ao())P.g.rotation.y-=.005;
+      pB.pm.forEach(function(m,i){
+        var t=(Math.sin(T+i*.88)+1)*.5;
+        m.material.color.setRGB(.23+t*.75,.51+t*.23,.96-t*.82);
+        m.material.emissiveIntensity=.12+t*.30;
+      });
+      C.rend.render(C.sc,C.cam);
+      P.rend.render(P.sc,P.cam);
+    })();
+    function resize(){
+      [C,P].forEach(function(s){
+        var W=s.cv.parentElement.clientWidth;if(!W||W<10)return;
+        s.rend.setSize(W,320);s.cam.aspect=W/320;s.cam.updateProjectionMatrix();
+      });
+    }
+    window.addEventListener('resize',resize);setTimeout(resize,180);
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',boot);}
+  else{boot();}
+})();
+</script>
+
+</section>
+
+<!-- 09 REFERENCES -->
+<section id="references">
+  <div class="container">
+    <span class="sec-tag">09 — References</span>
+    <h2 class="sec-title">Peer-Reviewed Sources.</h2>
+    <p class="sec-sub" style="color:rgba(255,255,255,0.55);">All data, performance figures, and design parameters cited to peer-reviewed literature. Minimum 5 sources per CHE 201 project requirements.</p>
+    <div class="ref-list reveal">
+      <div class="ref-item">Faraj, K., Faraj, J., Faraj, M., & Bazian, M. (2022). <em>Year-long energy analysis of building brick filled with phase change materials.</em> Energy and Buildings, 254, 111546. https://doi.org/10.1016/j.enbuild.2021.111546</div>
+      <div class="ref-item">Al-Yasiri, Q., & Szabó, M. (2025). <em>Enhancing thermal performance in concrete bricks with phase change materials — numerical study using ANSYS Fluent (RT37, RT42, composite PCMs).</em> Energy Storage. ScienceDirect.</div>
+      <div class="ref-item">Melo, R., et al. (2025). <em>Eco-friendly compressed earth bricks enhanced with micro-encapsulated PCM — thermal and mechanical performance across 5 melt-solidification cycles.</em> Energy Storage. ScienceDirect.</div>
+      <div class="ref-item">MDPI Materials. (2025). <em>Phase change materials in residential buildings: Challenges, opportunities, and performance — PRISMA systematic review, 2015–2025.</em> MDPI Materials.</div>
+      <div class="ref-item">ScienceDirect Review. (2023). <em>Comprehensive review: PCM integration in building bricks — methods, performance, and applications. Covers macro-encapsulation, topology optimization for improved heat transfer.</em> Energy and Buildings.</div>
+      <div class="ref-item">BASF SE. (2024). <em>Micronal® PCM — Phase change material for construction applications.</em> BASF Technical Documentation. basf.com/micronal</div>
+      <div class="ref-item">Rubitherm Technologies GmbH. (2024). <em>RT-series paraffin PCM product datasheets (RT37, RT42).</em> rubitherm.eu</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>CHE 201 · Spring 2026 · <span>PCM Smart Bricks</span> · University of Illinois Chicago · Due April 27, 2026</p>
+</footer>
+
+<script>
+// TAB SYSTEM
+function showTab(name, btn) {
+  document.querySelectorAll('.tc').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(el => el.classList.remove('active'));
+  document.getElementById('tc-' + name).classList.add('active');
+  btn.classList.add('active');
 }
+
+// DAY / NIGHT TOGGLE
+function setMode(mode) {
+  const isDay = mode === 'day';
+  document.getElementById('btn-day').classList.toggle('active', isDay);
+  document.getElementById('btn-night').classList.toggle('active', !isDay);
+
+  const convArrows = document.getElementById('conv-arrows');
+  document.getElementById('conv-t').textContent     = isDay ? '38°C' : '14°C';
+  document.getElementById('conv-out-lbl').textContent = isDay ? '38°C' : '14°C';
+  document.getElementById('pcm-t').textContent      = isDay ? '28°C' : '19°C';
+  document.getElementById('pcm-out-lbl').textContent  = isDay ? '28°C' : '19°C';
+
+  // Night: reverse arrow direction on conventional (heat going out)
+  convArrows.style.transform       = isDay ? '' : 'scaleX(-1)';
+  convArrows.style.transformOrigin = '130px 93px';
+
+  // Night: PCM cells stop pulsing (releasing instead of absorbing)
+  document.querySelectorAll('.pcm-cell').forEach(el => {
+    el.style.animationPlayState = isDay ? 'running' : 'paused';
+    el.style.fill = isDay ? '' : '#BFDBFE';
+  });
+}
+
+// SCROLL REVEAL
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+revealEls.forEach(el => revealObs.observe(el));
 </script>
 </body>
 </html>
