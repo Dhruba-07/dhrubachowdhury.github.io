@@ -901,6 +901,8 @@ footer span { color:var(--yellow); }
 
 <script>
 (function(){
+  var BV_THREE_RETRIES=25;
+  var BV_THREE_RETRY_DELAY=120;
   function showFallback(msg){
     ['conv','pcm'].forEach(function(kind){
       var host=document.getElementById('bv-'+kind+'-cw');
@@ -910,7 +912,7 @@ footer span { color:var(--yellow); }
         '</div><div class="bv-fb-sub">'+
         (kind==='conv'
           ?'Static fallback active. Standard clay brick has no latent-heat storage and transmits heat directly.'
-          :'Static fallback active. PCM brick stores/release heat through phase change to smooth indoor temperature swings.')+
+          :'Static fallback active. PCM brick stores/releases heat through phase change to smooth indoor temperature swings.')+
         '</div></div>';
     });
     var sub=document.querySelector('#prototype .bv-sub');
@@ -1111,10 +1113,10 @@ footer span { color:var(--yellow); }
       showFallback('3D interactive view unavailable right now. Showing static comparison instead.');
       return;
     }
-    setTimeout(function(){waitForThree(tries-1);},120);
+    setTimeout(function(){waitForThree(tries-1);},BV_THREE_RETRY_DELAY);
   }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){waitForThree(25);});}
-  else{waitForThree(25);}
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){waitForThree(BV_THREE_RETRIES);});}
+  else{waitForThree(BV_THREE_RETRIES);}
 })();
 </script>
 
