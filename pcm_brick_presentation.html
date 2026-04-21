@@ -838,6 +838,9 @@ footer span { color:var(--yellow); }
 .bv-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 30px;}
 .bv-leg{display:flex;align-items:center;gap:9px;font-family:'Crimson Pro',serif;font-size:0.9rem;font-weight:300;color:rgba(255,255,255,0.5);}
 .bv-ld{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.bv-fb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:320px;padding:22px;text-align:center;background:rgba(255,255,255,0.03);}
+.bv-fb-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#fff;}
+.bv-fb-sub{font-family:'Crimson Pro',serif;font-size:0.9rem;color:rgba(255,255,255,0.58);line-height:1.5;max-width:340px;}
 @media(max-width:660px){.bv-grid{grid-template-columns:1fr;}.bv-wrap{padding:0 20px;}}
 </style>
 
@@ -898,7 +901,31 @@ footer span { color:var(--yellow); }
 
 <script>
 (function(){
-  if(typeof THREE==='undefined'){console.error('Three.js not loaded');return;}
+  var BV_THREE_MAX_RETRIES=25;
+  var BV_THREE_RETRY_DELAY_MS=120;
+  function showFallback(msg){
+    var fallbackPrefix='Static fallback active. ';
+    ['conv','pcm'].forEach(function(kind){
+      var host=document.getElementById('bv-'+kind+'-cw');
+      if(!host)return;
+      host.textContent='';
+      var box=document.createElement('div');
+      box.className='bv-fb';
+      var title=document.createElement('div');
+      title.className='bv-fb-title';
+      title.textContent=(kind==='conv'?'Conventional Brick':'PCM Smart Brick');
+      var sub=document.createElement('div');
+      sub.className='bv-fb-sub';
+      sub.textContent=fallbackPrefix+(kind==='conv'
+        ?'Standard clay brick has no latent-heat storage and transmits heat directly.'
+        :'PCM brick stores/releases heat through phase change to smooth indoor temperature swings.');
+      box.appendChild(title);
+      box.appendChild(sub);
+      host.appendChild(box);
+    });
+    var sub=document.querySelector('#prototype .bv-sub');
+    if(sub&&msg){sub.textContent=msg;}
+  }
   function mkTex(h){
     var c=document.createElement('canvas');c.width=512;c.height=512;
     var ctx=c.getContext('2d');ctx.fillStyle=h;ctx.fillRect(0,0,512,512);
@@ -917,8 +944,14 @@ footer span { color:var(--yellow); }
   }
   function mkScene(id){
     var cv=document.getElementById(id);
+    if(!cv||!cv.parentElement){throw new Error('Canvas element or its parent container not found');}
     var W=Math.max(cv.parentElement.clientWidth||380,260),H=320;
-    var rend=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    var rend;
+    try{
+      rend=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+    }catch(e){
+      throw new Error('WebGL initialization failed');
+    }
     rend.setSize(W,H);rend.setPixelRatio(Math.min(window.devicePixelRatio,2));
     rend.shadowMap.enabled=true;rend.shadowMap.type=THREE.PCFSoftShadowMap;
     var sc=new THREE.Scene();
@@ -1049,35 +1082,49 @@ footer span { color:var(--yellow); }
     p.classList.add('bv-vis');
   }
   function boot(){
-    var C=mkScene('bv-conv-canvas');
-    var cB=bConv(C.sc);C.g=cB.g;C.cl=cB.cl;
-    C.g.rotation.set(.3,.48,0);addI(C,'conv');
-    var P=mkScene('bv-pcm-canvas');
-    var pB=bPCM(P.sc);P.g=pB.g;P.cl=pB.cl;
-    P.g.rotation.set(.3,-.48,0);addI(P,'pcm');
-    var T=0;
-    (function loop(){
-      requestAnimationFrame(loop);T+=.018;
-      if(C.ao())C.g.rotation.y+=.005;
-      if(P.ao())P.g.rotation.y-=.005;
-      pB.pm.forEach(function(m,i){
-        var t=(Math.sin(T+i*.88)+1)*.5;
-        m.material.color.setRGB(.23+t*.75,.51+t*.23,.96-t*.82);
-        m.material.emissiveIntensity=.12+t*.30;
-      });
-      C.rend.render(C.sc,C.cam);
-      P.rend.render(P.sc,P.cam);
-    })();
-    function resize(){
-      [C,P].forEach(function(s){
-        var W=s.cv.parentElement.clientWidth;if(!W||W<10)return;
-        s.rend.setSize(W,320);s.cam.aspect=W/320;s.cam.updateProjectionMatrix();
-      });
+    try{
+      var C=mkScene('bv-conv-canvas');
+      var cB=bConv(C.sc);C.g=cB.g;C.cl=cB.cl;
+      C.g.rotation.set(.3,.48,0);addI(C,'conv');
+      var P=mkScene('bv-pcm-canvas');
+      var pB=bPCM(P.sc);P.g=pB.g;P.cl=pB.cl;
+      P.g.rotation.set(.3,-.48,0);addI(P,'pcm');
+      var T=0;
+      (function loop(){
+        requestAnimationFrame(loop);T+=.018;
+        if(C.ao())C.g.rotation.y+=.005;
+        if(P.ao())P.g.rotation.y-=.005;
+        pB.pm.forEach(function(m,i){
+          var t=(Math.sin(T+i*.88)+1)*.5;
+          m.material.color.setRGB(.23+t*.75,.51+t*.23,.96-t*.82);
+          m.material.emissiveIntensity=.12+t*.30;
+        });
+        C.rend.render(C.sc,C.cam);
+        P.rend.render(P.sc,P.cam);
+      })();
+      function resize(){
+        [C,P].forEach(function(s){
+          var W=s.cv.parentElement.clientWidth;if(!W||W<10)return;
+          s.rend.setSize(W,320);s.cam.aspect=W/320;s.cam.updateProjectionMatrix();
+        });
+      }
+      window.addEventListener('resize',resize);setTimeout(resize,180);
+    }catch(err){
+      console.error(err);
+      showFallback('3D interactive view unavailable in this browser. Showing static comparison instead.');
     }
-    window.addEventListener('resize',resize);setTimeout(resize,180);
   }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',boot);}
-  else{boot();}
+  function waitForThree(tries){
+    if(typeof THREE!=='undefined'){boot();return;}
+    if(tries<=0){
+      console.error('Three.js not loaded');
+      showFallback('3D interactive view unavailable right now. Showing static comparison instead.');
+      return;
+    }
+    setTimeout(function(){waitForThree(tries-1);},BV_THREE_RETRY_DELAY_MS);
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){waitForThree(BV_THREE_MAX_RETRIES);});}
+  else{waitForThree(BV_THREE_MAX_RETRIES);}
 })();
 </script>
 
